@@ -1,1 +1,0 @@
-// Animação da movimentação do puzzle

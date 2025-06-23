@@ -1,1 +1,0 @@
-// Envia/recebe JSON via `fetch()` para o backend Crow

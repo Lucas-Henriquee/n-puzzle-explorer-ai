@@ -1,1 +1,0 @@
-// Heurísticas usadas nos algoritmos

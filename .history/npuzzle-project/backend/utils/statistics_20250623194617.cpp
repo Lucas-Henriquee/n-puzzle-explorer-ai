@@ -1,1 +1,0 @@
-// Tempo de execução, nós expandidos etc.
