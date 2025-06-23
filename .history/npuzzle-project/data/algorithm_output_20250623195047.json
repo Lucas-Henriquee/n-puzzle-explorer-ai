@@ -1,0 +1,9 @@
+{
+  // This is a single-line comment
+  "name": "Maria Souza",
+  /*
+    This is a
+    multi-line comment
+  */
+  "email": "maria.souza@example.com"
+}

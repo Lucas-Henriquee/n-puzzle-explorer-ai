@@ -1,0 +1,1 @@
+// Lê e responde requisições JSON

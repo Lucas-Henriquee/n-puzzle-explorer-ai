@@ -1,0 +1,1 @@
+// Cria e interpreta JSONs (interface com o backend)
