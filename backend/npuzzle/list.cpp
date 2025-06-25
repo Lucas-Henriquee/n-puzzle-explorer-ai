@@ -1,0 +1,75 @@
+#include <iostream>
+#include "state.cpp" // Inclui o cabeçalho do estado
+
+using namespace std;
+
+class List{
+    private:
+        size_t size; // Tamanho da lista
+        State* head; // Ponteiro para o primeiro elemento da lista
+        State* tail; // Ponteiro para o último elemento da lista
+    public:
+        size_t get_size() const { return size; } // Método para obter o tamanho da lista
+        State* get_head() const { return head; } // Método para obter o primeiro elemento da lista
+        State* get_tail() const { return tail; } // Método para obter o último elemento
+        State* get_lower_cost(); // Método para obter o estado com o menor custo na lista
+        void add(State* state); // Método para adicionar um estado à lista
+        void remove(State* state); // Método para remover um estado da lista
+        List() : size(0), head(nullptr), tail(nullptr) {} // Construtor
+        ~List(){}; // Destrutor
+};
+
+State* List::get_lower_cost() {
+    if (head == nullptr) return nullptr; // Se a lista estiver vazia, retorna nulo
+
+    State* current = head; // Começa do primeiro elemento
+    State* min_state = head; // Inicializa o estado com o menor custo como o primeiro
+
+    while (current != nullptr) {
+        if (current->get_cost() < min_state->get_cost()) {
+            min_state = current; // Atualiza o estado com o menor custo
+        }
+        current = current->get_next(); // Move para o próximo estado
+    }
+    return min_state; // Retorna o estado com o menor custo
+}
+
+void List::add(State* state) {
+    if (head == nullptr) {
+        head = state; // Se a lista estiver vazia, o novo estado é o primeiro
+        tail = state; // O novo estado também é o último
+    } else {
+        tail->set_next(state); // Define o próximo do último estado como o novo estado
+        state->set_prev(tail); // Define o anterior do novo estado como o último
+        tail = state; // Atualiza o último estado para o novo estado
+    }
+    size++; // Incrementa o tamanho da lista
+}
+
+void List::remove(State* state) {
+    if (state == nullptr) return; // Se o estado for nulo, não faz nada
+
+    if (state == head) {
+        head = state->get_next(); // Atualiza o primeiro elemento
+        if (head != nullptr) {
+            head->set_prev(nullptr); // Se houver um novo primeiro elemento, atualiza seu anterior
+        } else {
+            tail = nullptr; // Se a lista ficar vazia, atualiza o último elemento
+        }
+    } else if (state == tail) {
+        tail = state->get_prev(); // Atualiza o último elemento
+        if (tail != nullptr) {
+            tail->set_next(nullptr); // Se houver um novo último elemento, atualiza seu próximo
+        } else {
+            head = nullptr; // Se a lista ficar vazia, atualiza o primeiro elemento
+        }
+    } else {
+        State* prev_state = state->get_prev();
+        State* next_state = state->get_next();
+        prev_state->set_next(next_state); // Atualiza o próximo do estado anterior
+        if (next_state != nullptr) {
+            next_state->set_prev(prev_state); // Atualiza o anterior do estado seguinte
+        }
+    }
+    size--; // Decrementa o tamanho da lista
+}
