@@ -23,6 +23,7 @@ class State {
         State* get_parent() const { return parent; } // Método para obter o estado pai
         State* get_next() const { return next; } // Método para obter o próximo estado
         State* get_prev() const { return prev; } // Método para obter o estado anterior
+        Board get_board() const { return board; } // Método para obter o tabuleiro associado ao estado
 
         void set_next(State* next_state) { next = next_state; } // Método para definir o próximo estado
         void set_prev(State* prev_state) { prev = prev_state; } // Método para definir o estado anterior

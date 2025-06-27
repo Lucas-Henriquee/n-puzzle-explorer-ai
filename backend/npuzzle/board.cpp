@@ -17,12 +17,12 @@ private:
     size_t rows_size; // Tamanho da linha
     void read_goal_board(); // Método para ler o tabuleiro objetivo
     void read_real_board(); // Método para ler o tabuleiro real
-    bool move(char direction); // Método para mover o espaço vazio no tabuleiro
     bool end_game(); // Método para verificar se o jogo terminou
 public:
     Board(size_t rows = 3, size_t columns = 3);
     ~Board();
     void print_board(vector<vector<size_t>>& b); // Método para imprimir o tabuleiro
+    bool move(char direction); // Método para mover o espaço vazio no tabuleiro
     vector<vector<size_t>> real_board; // Representa o tabuleiro real
     vector<vector<size_t>> goal_board; // Representa o tabuleiro objetivo
 };
