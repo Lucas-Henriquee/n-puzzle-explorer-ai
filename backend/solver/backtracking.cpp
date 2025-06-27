@@ -3,20 +3,9 @@
 #include "../include/state.hpp"
 #include "../include/board_utils.hpp"
 #include "../include/backtracking.hpp"
+#include "../include/statistics.hpp"
 
-// Variáveis globais de estatísticas
-size_t nodes_expanded = 0;
-size_t nodes_visited = 0;
-size_t total_branching = 0;
-
-// Conjunto para rastrear estados visitados
-unordered_set<vector<size_t>, VectorHash> visited;
-
-// Caminho encontrado
-vector<State *> solution_path;
-
-// Função recursiva de backtracking
-bool backtrack(State *currentState, size_t &id, chrono::steady_clock::time_point start_time)
+bool backtrack(State *currentState, size_t &id, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, unordered_set<vector<size_t>, VectorHash> &visited, vector<State *> &solution_path, chrono::steady_clock::time_point start_time)
 {
     nodes_expanded++;
 
@@ -35,25 +24,6 @@ bool backtrack(State *currentState, size_t &id, chrono::steady_clock::time_point
         }
 
         reverse(solution_path.begin(), solution_path.end());
-
-        auto end_time = chrono::steady_clock::now();
-        chrono::duration<double> elapsed = end_time - start_time;
-
-        cout << "Solução encontrada (Backtracking)!\n\n";
-
-        for (auto *state : solution_path)
-        {
-            state->get_board().print_board(state->get_board().real_board);
-            cout << "Custo: " << state->get_cost() << ", Profundidade: " << state->get_depth() << endl;
-        }
-
-        cout << "\nEstatísticas:\n";
-        cout << "Profundidade da solução: " << currentState->get_depth() << endl;
-        cout << "Custo da solução: " << currentState->get_cost() << endl;
-        cout << "Número de nós expandidos: " << nodes_expanded << endl;
-        cout << "Número de nós visitados: " << nodes_visited << endl;
-        cout << "Fator médio de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-        cout << "Tempo de execução: " << elapsed.count() << " s\n";
 
         return true;
     }
@@ -83,7 +53,7 @@ bool backtrack(State *currentState, size_t &id, chrono::steady_clock::time_point
             successors_this_node++;
 
             // Chamada recursiva para explorar esse sucessor
-            if (backtrack(successor, id, start_time))
+            if (backtrack(successor, id, nodes_expanded, nodes_visited, total_branching, visited, solution_path, start_time))
                 return true;
 
             // Remove o estado visitado caso não seja solução
@@ -99,9 +69,13 @@ bool backtrack(State *currentState, size_t &id, chrono::steady_clock::time_point
 
 void BacktrackingSearch(Board initialBoard)
 {
-    nodes_expanded = 0;    // Reseta o contador de nós expandidos
-    nodes_visited = 0;     // Reseta o contador de nós visitados
-    total_branching = 0;   // Reseta o total de ramificações
+    size_t nodes_expanded = 0;  // Reseta o contador de nós expandidos
+    size_t nodes_visited = 0;   // Reseta o contador de nós visitados
+    size_t total_branching = 0; // Reseta o total de ramificações
+
+    unordered_set<vector<size_t>, VectorHash> visited; // Conjunto para rastrear estados visitados
+    vector<State *> solution_path;                     // Vetor para armazenar o caminho da solução
+
     visited.clear();       // Limpa o conjunto de estados visitados
     solution_path.clear(); // Limpa o caminho da solução
 
@@ -119,17 +93,26 @@ void BacktrackingSearch(Board initialBoard)
     State *initialState = new State(id++, 0, 0, nullptr, initialBoard);
 
     // Inicia a busca por backtracking
-    bool found = backtrack(initialState, id, start_time);
+    bool found = backtrack(initialState, id, nodes_expanded, nodes_visited, total_branching, visited, solution_path, start_time);
 
-    if (!found)
+    auto end_time = chrono::steady_clock::now();
+    chrono::duration<double> elapsed = end_time - start_time;
+
+    SearchStatistics stats;
+    stats.algorithm_name = "Backtracking";
+    stats.heuristic_name = "";
+    stats.elapsed_time = elapsed.count();
+    stats.nodes_expanded = nodes_expanded;
+    stats.nodes_visited = nodes_visited;
+    stats.total_branching = total_branching;
+    stats.solution_found = found;
+
+    if (found)
     {
-        auto end_time = chrono::steady_clock::now();
-        chrono::duration<double> elapsed = end_time - start_time;
-
-        cout << "Solução não encontrada (Backtracking).\n";
-        cout << "Número de nós expandidos: " << nodes_expanded << endl;
-        cout << "Número de nós visitados: " << nodes_visited << endl;
-        cout << "Fator médio de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-        cout << "Tempo de execução: " << elapsed.count() << " s\n";
+        stats.solution_cost = solution_path.back()->get_cost();
+        stats.solution_depth = solution_path.back()->get_depth();
+        stats.solution_path = solution_path;
     }
+
+    print_statistics(stats);
 }

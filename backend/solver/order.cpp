@@ -4,6 +4,7 @@
 #include "../include/state.hpp"
 #include "../include/board_utils.hpp"
 #include "../include/order.hpp"
+#include "../include/statistics.hpp"
 
 // Função que realiza a Busca Ordenada
 void OrderSearch(Board board)
@@ -24,6 +25,8 @@ void OrderSearch(Board board)
     nodes_visited++;
 
     auto start_time = chrono::steady_clock::now();
+
+    vector<State *> solution_path;
 
     while (openList.is_not_empty())
     {
@@ -52,8 +55,6 @@ void OrderSearch(Board board)
             auto end_time = chrono::steady_clock::now();
             chrono::duration<double> elapsed = end_time - start_time;
 
-            cout << "Solução encontrada (Busca Ordenada)!\n\n";
-
             vector<State *> path;
 
             for (State *s = currentState; s != nullptr; s = s->get_parent())
@@ -61,19 +62,21 @@ void OrderSearch(Board board)
 
             reverse(path.begin(), path.end());
 
-            for (auto *s : path)
-            {
-                s->get_board().print_board(s->get_board().real_board);
-                cout << "Custo: " << s->get_cost() << ", Profundidade: " << s->get_depth() << endl;
-            }
+            solution_path = path;
 
-            cout << "\nEstatísticas:\n";
-            cout << "Profundidade da solução: " << currentState->get_depth() << endl;
-            cout << "Custo da solução: " << currentState->get_cost() << endl;
-            cout << "Nós expandidos: " << nodes_expanded << endl;
-            cout << "Nós visitados: " << nodes_visited << endl;
-            cout << "Fator médio de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-            cout << "Tempo de execução: " << elapsed.count() << " s\n";
+            SearchStatistics stats;
+            stats.algorithm_name = "Ordered Search";
+            stats.heuristic_name = "";
+            stats.elapsed_time = elapsed.count();
+            stats.nodes_expanded = nodes_expanded;
+            stats.nodes_visited = nodes_visited;
+            stats.total_branching = total_branching;
+            stats.solution_found = true;
+            stats.solution_cost = currentState->get_cost();
+            stats.solution_depth = currentState->get_depth();
+            stats.solution_path = solution_path;
+
+            print_statistics(stats);
 
             return;
         }
@@ -169,9 +172,14 @@ void OrderSearch(Board board)
     auto end_time = chrono::steady_clock::now();
     chrono::duration<double> elapsed = end_time - start_time;
 
-    cout << "Solução não encontrada (Busca Ordenada).\n";
-    cout << "Nós expandidos: " << nodes_expanded << endl;
-    cout << "Nós visitados: " << nodes_visited << endl;
-    cout << "Fator médio de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-    cout << "Tempo de execução: " << elapsed.count() << " s\n";
+    SearchStatistics stats;
+    stats.algorithm_name = "Ordered Search";
+    stats.heuristic_name = "";
+    stats.elapsed_time = elapsed.count();
+    stats.nodes_expanded = nodes_expanded;
+    stats.nodes_visited = nodes_visited;
+    stats.total_branching = total_branching;
+    stats.solution_found = false;
+
+    print_statistics(stats);
 }

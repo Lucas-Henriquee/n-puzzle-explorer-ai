@@ -4,6 +4,7 @@
 #include "../include/state.hpp"
 #include "../include/board_utils.hpp"
 #include "../include/dfs.hpp"
+#include "../include/statistics.hpp"
 
 // Implementação da Busca em Profundidade (DFS)
 void DepthFirstSearch(Board initialBoard)
@@ -25,7 +26,10 @@ void DepthFirstSearch(Board initialBoard)
     openList.add(initialState); // Adiciona o estado inicial à lista aberta
 
     visited.insert(flatten_board(initialBoard.real_board)); // Armazena o estado inicial como visitado
-    nodes_visited++;                                       
+    nodes_visited++;
+
+    bool found = false;
+    vector<State *> solution_path;
 
     while (openList.is_not_empty())
     {
@@ -40,36 +44,14 @@ void DepthFirstSearch(Board initialBoard)
         // Verifica se o estado atual é o estado objetivo
         if (currentState->get_board().end_game())
         {
-            auto end_time = chrono::steady_clock::now();
-            chrono::duration<double> elapsed = end_time - start_time;
-
-            cout << "Solução encontrada (DFS)!" << endl;
+            found = true;
 
             // Reconstrução do caminho da solução
-            vector<State *> path;
-
             for (State *s = currentState; s != nullptr; s = s->get_parent())
-                path.push_back(s);
+                solution_path.push_back(s);
 
-            reverse(path.begin(), path.end()); // Inverte o caminho para mostrar do início ao fim
-
-            // Imprime o caminho da solução
-            for (auto *s : path)
-            {
-                s->get_board().print_board(s->get_board().real_board);
-                cout << "Custo: " << s->get_cost() << ", Profundidade: " << s->get_depth() << endl;
-            }
-
-            // Exibe as estatísticas da busca
-            cout << "\nEstatísticas:" << endl;
-            cout << "Profundidade da solução: " << currentState->get_depth() << endl;
-            cout << "Custo da solução: " << currentState->get_cost() << endl;
-            cout << "Número total de nós expandidos: " << nodes_expanded << endl;
-            cout << "Número total de nós visitados: " << nodes_visited << endl;
-            cout << "Média do fator de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-            cout << "Tempo de execução: " << elapsed.count() << " segundos" << endl;
-
-            return;
+            reverse(solution_path.begin(), solution_path.end());
+            break;
         }
 
         size_t successors_this_node = 0; // Contador de sucessores deste nó
@@ -86,7 +68,7 @@ void DepthFirstSearch(Board initialBoard)
 
                 // Verifica se o estado já foi visitado ou está fechado
                 if (visited.count(flat) || closed.count(flat))
-                    continue; // Ignora estados já visitados
+                    continue;
 
                 visited.insert(flat); // Marca o novo estado como visitado
                 nodes_visited++;      // Incrementa o número de nós visitados
@@ -103,13 +85,24 @@ void DepthFirstSearch(Board initialBoard)
         total_branching += successors_this_node;
     }
 
-    // Se o laço termina sem encontrar a solução:
     auto end_time = chrono::steady_clock::now();
     chrono::duration<double> elapsed = end_time - start_time;
 
-    cout << "Solução não encontrada (DFS)." << endl;
-    cout << "Número total de nós expandidos: " << nodes_expanded << endl;
-    cout << "Número total de nós visitados: " << nodes_visited << endl;
-    cout << "Média do fator de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-    cout << "Tempo de execução: " << elapsed.count() << " segundos" << endl;
+    SearchStatistics stats;
+    stats.algorithm_name = "Depth-First Search (DFS)";
+    stats.heuristic_name = "";
+    stats.elapsed_time = elapsed.count();
+    stats.nodes_expanded = nodes_expanded;
+    stats.nodes_visited = nodes_visited;
+    stats.total_branching = total_branching;
+    stats.solution_found = found;
+
+    if (found)
+    {
+        stats.solution_cost = solution_path.back()->get_cost();
+        stats.solution_depth = solution_path.back()->get_depth();
+        stats.solution_path = solution_path;
+    }
+
+    print_statistics(stats);
 }

@@ -4,11 +4,11 @@
 #include "../include/state.hpp"
 #include "../include/board_utils.hpp"
 #include "../include/bfs.hpp"
+#include "../include/statistics.hpp"
 
 // Implementação da Busca em Largura (BFS)
 void BreadthFirstSearch(Board board)
 {
-
     size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
     size_t nodes_visited = 0;   // Contador de nós visitados
@@ -28,92 +28,80 @@ void BreadthFirstSearch(Board board)
     visited.insert(flatten_board(board.real_board)); // Adiciona o estado inicial ao conjunto de visitados
     nodes_visited++;                                 // Incrementa o contador de nós visitados
 
+    bool found = false;            // Variável para indicar se a solução foi encontrada
+    vector<State *> solution_path; // Vetor para armazenar o caminho da solução
+
     while (openList.is_not_empty())
     {
-        // Enquanto houver estados na lista aberta
         State *currentState = openList.get_head(); // Obtém o estado atual
 
         openList.remove(currentState);                                      // Remove o estado atual da lista aberta
         closed.insert(flatten_board(currentState->get_board().real_board)); // Adiciona o estado atual ao conjunto de fechados
 
-        nodes_expanded++; // Incrementa o contador de nós expandidos
+        nodes_expanded++;
 
         // Verifica se o estado atual é a solução
         if (currentState->get_board().end_game())
         {
-            auto end_time = chrono::steady_clock::now();
-            chrono::duration<double> elapsed = end_time - start_time;
-
-            cout << "Solução encontrada!" << endl;
+            found = true;
 
             // Reconstrução do caminho
-            vector<State *> path;
-
-            // Percorre os estados pais do estado atual até o estado inicial
             for (State *s = currentState; s != nullptr; s = s->get_parent())
-                path.push_back(s);
+                solution_path.push_back(s);
 
-            reverse(path.begin(), path.end());
+            reverse(solution_path.begin(), solution_path.end());
 
-            cout << "Caminho da solução (do estado inicial ao final):" << endl;
-
-            for (auto *s : path)
-            {
-                s->get_board().print_board(s->get_board().real_board);
-                cout << "Custo: " << s->get_cost() << ", Profundidade: " << s->get_depth() << endl;
-            }
-
-            cout << "Estatísticas:\n";
-            cout << "Profundidade da solução: " << currentState->get_depth() << endl;
-            cout << "Custo da solução: " << currentState->get_cost() << endl;
-            cout << "Nós expandidos: " << nodes_expanded << endl;
-            cout << "Nós visitados: " << nodes_visited << endl;
-            cout << "Fator de ramificação médio: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-            cout << "Tempo de execução: " << elapsed.count() << " s\n";
-
-            return;
+            break;
         }
 
-        size_t sucessors_this_node = 0; // Contador de sucessores deste nó
+        size_t successors_this_node = 0;
 
         // Gera os sucessores do estado atual e os adiciona à lista aberta
         for (char direction : {'U', 'D', 'L', 'R'})
         {
             Board newBoard = currentState->get_board(); // Cria uma cópia do tabuleiro atual
 
-            // Tenta mover o espaço vazio na direção especificada
             if (newBoard.move(direction))
             {
+                auto flat = flatten_board(newBoard.real_board);
 
-                auto flat = flatten_board(newBoard.real_board); // Achata o tabuleiro para comparação
-
-                // Verifica se o sucessor já foi visitado ou está na lista fechada
                 if (visited.count(flat) || closed.count(flat))
                     continue;
 
-                visited.insert(flat); // Adiciona o sucessor ao conjunto de visitados
-                nodes_visited++;      // Incrementa o contador de nós visitados
+                visited.insert(flat);
+                nodes_visited++;
 
-                // Cria um novo estado sucessor
                 State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
 
-                openList.add(successor); // Adiciona o sucessor à lista aberta
-                sucessors_this_node++;   // Incrementa o contador de sucessores deste nó
+                openList.add(successor);
+                successors_this_node++;
             }
         }
 
-        total_branching += sucessors_this_node; // Atualiza o total de ramificações
+        total_branching += successors_this_node;
     }
 
     auto end_time = chrono::steady_clock::now();
-    chrono::duration<double> elapsed_seconds = end_time - start_time;
+    chrono::duration<double> elapsed = end_time - start_time;
 
-    cout << "Solução não encontrada." << endl;
-    cout << "Estatísticas:" << endl;
-    cout << "Número total de nós expandidos: " << nodes_expanded << endl;
-    cout << "Número total de nós visitados: " << nodes_visited << endl;
-    cout << "Média do fator de ramificação: " << (nodes_expanded > 0 ? (double)total_branching / nodes_expanded : 0) << endl;
-    cout << "Tempo de execução: " << elapsed_seconds.count() << " segundos" << endl;
+    // Monta as estatísticas
+    SearchStatistics stats;
+    stats.algorithm_name = "Breadth-First Search (BFS)";
+    stats.heuristic_name = "";
+    stats.elapsed_time = elapsed.count();
+    stats.nodes_expanded = nodes_expanded;
+    stats.nodes_visited = nodes_visited;
+    stats.total_branching = total_branching;
+    stats.solution_found = found;
+
+    if (found)
+    {
+        stats.solution_cost = solution_path.back()->get_cost();
+        stats.solution_depth = solution_path.back()->get_depth();
+        stats.solution_path = solution_path;
+    }
+
+    print_statistics(stats);
 }
 
 // State *successor = new State(id, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
