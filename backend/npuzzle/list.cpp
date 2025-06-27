@@ -1,77 +1,105 @@
-#include <iostream>
-#include "../npuzzle/state.cpp" // Inclui o cabeçalho do estado
+#include "../include/list.hpp"
+#include "../include/defines.hpp"
 
-using namespace std;
-
-class List{
-    private:
-        size_t size; // Tamanho da lista
-        State* head; // Ponteiro para o primeiro elemento da lista
-        State* tail; // Ponteiro para o último elemento da lista
-        State* lower; // Ponteiro para o estado com o menor custo na lista
-    public:
-        size_t get_size() const { return size; } // Método para obter o tamanho da lista
-        State* get_head() const { return head; } // Método para obter o primeiro elemento da lista
-        State* get_tail() const { return tail; } // Método para obter o último elemento
-        State* get_lower_cost() const { return lower; } // Método para obter o estado com o menor custo na lista
-        bool is_not_empty() const { return size > 0; } // Método para verificar se a lista não está vazia
-        void add(State* state); // Método para adicionar um estado à lista
-        void remove(State* state); // Método para remover um estado da lista
-        List() : size(0), head(nullptr), tail(nullptr) {} // Construtor
-        ~List(){}; // Destrutor
-};
-
-void List::add(State* state) {
-    if (head == nullptr) {
-        head = state; // Se a lista estiver vazia, o novo estado é o primeiro
-        tail = state; // O novo estado também é o último
+void List::add(State *state)
+{
+    if (head == nullptr)
+    {
+        head = state;  // Se a lista estiver vazia, o novo estado é o primeiro
+        tail = state;  // O novo estado também é o último
         lower = state; // O novo estado é o de menor custo
-    } else {
+    }
+
+    else
+    {
         tail->set_next(state); // Define o próximo do último estado como o novo estado
         state->set_prev(tail); // Define o anterior do novo estado como o último
-        tail = state; // Atualiza o último estado para o novo estado
-        if (state->get_cost() < lower->get_cost()) {
+        tail = state;          // Atualiza o último estado para o novo estado
+
+        if (state->get_cost() < lower->get_cost())
+        {
             lower = state; // Se o novo estado tem custo menor, atualiza o menor custo
         }
     }
+
     size++; // Incrementa o tamanho da lista
 }
 
-void List::remove(State* state) {
-    if (state == nullptr) return; // Se o estado for nulo, não faz nada
+void List::remove(State *state)
+{
+    if (state == nullptr)
+        return; // Se o estado for nulo, não faz nada
 
-    if (state == head) {
+    if (state == head)
+    {
         head = state->get_next(); // Atualiza o primeiro elemento
-        if (head != nullptr) {
+
+        if (head != nullptr)
+        {
             head->set_prev(nullptr); // Se houver um novo primeiro elemento, atualiza seu anterior
-        } else {
+        }
+
+        else
+        {
             tail = nullptr; // Se a lista ficar vazia, atualiza o último elemento
         }
-    } else if (state == tail) {
+    }
+
+    else if (state == tail)
+    {
         tail = state->get_prev(); // Atualiza o último elemento
-        if (tail != nullptr) {
+
+        if (tail != nullptr)
+        {
             tail->set_next(nullptr); // Se houver um novo último elemento, atualiza seu próximo
-        } else {
+        }
+
+        else
+        {
             head = nullptr; // Se a lista ficar vazia, atualiza o primeiro elemento
         }
-    } else {
-        State* prev_state = state->get_prev();
-        State* next_state = state->get_next();
+    }
+
+    else
+    {
+        State *prev_state = state->get_prev();
+        State *next_state = state->get_next();
+
         prev_state->set_next(next_state); // Atualiza o próximo do estado anterior
-        if (next_state != nullptr) {
+
+        if (next_state != nullptr)
+        {
             next_state->set_prev(prev_state); // Atualiza o anterior do estado seguinte
         }
     }
-    if (state == lower) {
+
+    if (state == lower)
+    {
         // Se o estado removido for o de menor custo, precisamos encontrar um novo menor custo
         lower = head; // Começa do início da lista
-        State* current = head;
-        while (current != nullptr) {
-            if (current->get_cost() < lower->get_cost()) {
+        State *current = head;
+
+        while (current != nullptr)
+        {
+            if (current->get_cost() < lower->get_cost())
+            {
                 lower = current; // Atualiza o menor custo se encontrar um estado com custo menor
             }
             current = current->get_next(); // Avança para o próximo estado
         }
     }
+    
     size--; // Decrementa o tamanho da lista
+}
+
+List::~List()
+{
+    State *current = head;
+
+    while (current)
+    {
+        State *next = current->get_next();
+        delete current;
+        current = next;
+    }
 }
