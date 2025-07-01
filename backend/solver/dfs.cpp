@@ -14,8 +14,9 @@ void DepthFirstSearch(Board initialBoard)
     size_t nodes_visited = 0;   // Contador de nós visitados
     size_t total_branching = 0; // Contador do total de ramificações
 
-    unordered_set<vector<size_t>, VectorHash> visited; // Conjunto para armazenar estados já visitados
-    unordered_set<vector<size_t>, VectorHash> closed;  // Conjunto para armazenar estados fechados
+    unordered_set<vector<size_t>, VectorHash> visited;   // Conjunto para armazenar estados já visitados
+    unordered_set<vector<size_t>, VectorHash> closedSet; // Conjunto para armazenar estados fechados
+    vector<State *> closedList;                          // Lista para armazenar estados fechados
 
     List openList; // Lista para armazenar estados abertos
 
@@ -25,7 +26,7 @@ void DepthFirstSearch(Board initialBoard)
     State *initialState = new State(id++, 0, 0, nullptr, initialBoard);
     openList.add(initialState); // Adiciona o estado inicial à lista aberta
 
-    visited.insert(flatten_board(initialBoard.real_board)); // Armazena o estado inicial como visitado
+    visited.insert(initialBoard.real_board); // Armazena o estado inicial como visitado
     nodes_visited++;
 
     bool found = false;
@@ -37,7 +38,9 @@ void DepthFirstSearch(Board initialBoard)
         openList.remove(currentState);
 
         // Adiciona o estado atual ao conjunto de estados fechados
-        closed.insert(flatten_board(currentState->get_board().real_board));
+        closedSet.insert(currentState->get_board().real_board);
+
+        closedList.push_back(currentState);
 
         nodes_expanded++; // Incrementa o número de nós expandidos
 
@@ -64,14 +67,12 @@ void DepthFirstSearch(Board initialBoard)
             // Tenta mover o espaço vazio na direção especificada
             if (newBoard.move(dir))
             {
-                auto flat = flatten_board(newBoard.real_board); // Achata o tabuleiro para comparação
-
-                // Verifica se o estado já foi visitado ou está fechado
-                if (visited.count(flat) || closed.count(flat))
+                // Verifica se o novo estado já foi visitado ou está na lista fechada
+                if (visited.count(newBoard.real_board) || closedSet.count(newBoard.real_board))
                     continue;
 
-                visited.insert(flat); // Marca o novo estado como visitado
-                nodes_visited++;      // Incrementa o número de nós visitados
+                visited.insert(newBoard.real_board); // Marca o novo estado como visitado
+                nodes_visited++;                     // Incrementa o número de nós visitados
 
                 // Cria o novo estado sucessor
                 State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
@@ -96,6 +97,7 @@ void DepthFirstSearch(Board initialBoard)
     stats.nodes_visited = nodes_visited;
     stats.total_branching = total_branching;
     stats.solution_found = found;
+    stats.closed_list = closedList;
 
     if (found)
     {

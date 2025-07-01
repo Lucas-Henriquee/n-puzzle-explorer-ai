@@ -16,6 +16,7 @@ void BreadthFirstSearch(Board board)
 
     unordered_set<vector<size_t>, VectorHash> visited; // Conjunto para armazenar estados visitados
     unordered_set<vector<size_t>, VectorHash> closed;  // Conjunto para armazenar estados fechados
+    vector<State *> closedList;                        // Lista para armazenar estados fechados
 
     List openList; // Lista de estados abertos
 
@@ -25,8 +26,8 @@ void BreadthFirstSearch(Board board)
 
     openList.add(initialState); // Adiciona o estado inicial à lista aberta
 
-    visited.insert(flatten_board(board.real_board)); // Adiciona o estado inicial ao conjunto de visitados
-    nodes_visited++;                                 // Incrementa o contador de nós visitados
+    visited.insert(board.real_board); // Adiciona o estado inicial ao conjunto de visitados
+    nodes_visited++;                  // Incrementa o contador de nós visitados
 
     bool found = false;            // Variável para indicar se a solução foi encontrada
     vector<State *> solution_path; // Vetor para armazenar o caminho da solução
@@ -35,8 +36,10 @@ void BreadthFirstSearch(Board board)
     {
         State *currentState = openList.get_head(); // Obtém o estado atual
 
-        openList.remove(currentState);                                      // Remove o estado atual da lista aberta
-        closed.insert(flatten_board(currentState->get_board().real_board)); // Adiciona o estado atual ao conjunto de fechados
+        openList.remove(currentState);                       // Remove o estado atual da lista aberta
+        closed.insert(currentState->get_board().real_board); // Adiciona o estado atual ao conjunto de fechados
+
+        closedList.push_back(currentState);
 
         nodes_expanded++;
 
@@ -63,12 +66,10 @@ void BreadthFirstSearch(Board board)
 
             if (newBoard.move(direction))
             {
-                auto flat = flatten_board(newBoard.real_board);
-
-                if (visited.count(flat) || closed.count(flat))
+                if (visited.count(newBoard.real_board) || closed.count(newBoard.real_board))
                     continue;
 
-                visited.insert(flat);
+                visited.insert(newBoard.real_board);
                 nodes_visited++;
 
                 State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
@@ -93,6 +94,7 @@ void BreadthFirstSearch(Board board)
     stats.nodes_visited = nodes_visited;
     stats.total_branching = total_branching;
     stats.solution_found = found;
+    stats.closed_list = closedList;
 
     if (found)
     {

@@ -1,5 +1,4 @@
-#ifndef LIST_HPP
-#define LIST_HPP
+#pragma once
 
 #include "../include/defines.hpp"
 #include "state.hpp"
@@ -25,5 +24,3 @@ public:
     void add(State *state);                        // Método para adicionar um estado à lista
     void remove(State *state);                     // Método para remover um estado da lista
 };
-
-#endif // LIST_HPP

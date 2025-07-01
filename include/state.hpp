@@ -1,6 +1,4 @@
-// Estrutura de nós
-#ifndef STATE_HPP
-#define STATE_HPP
+#pragma once
 
 #include "../include/defines.hpp"
 #include "board.hpp"
@@ -30,5 +28,3 @@ public:
     void set_next(State *next_state) { next = next_state; } // Método para definir o próximo estado
     void set_prev(State *prev_state) { prev = prev_state; } // Método para definir o estado anterior
 };
-
-#endif // STATE_HPP

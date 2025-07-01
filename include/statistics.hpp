@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HPP
-#define STATISTICS_HPP
+#pragma once
 
 #include "../include/defines.hpp"
 #include "../include/state.hpp"
@@ -17,9 +16,9 @@ struct SearchStatistics
     string algorithm_name;
     string heuristic_name;
     vector<State *> solution_path;
+    vector<State *> closed_list;
 };
 
-void print_solution_path(const std::vector<State *> &path);
+void print_solution_path(const vector<State *> &path);
+void print_closed_list(const vector<State *> &closed_list);
 void print_statistics(const SearchStatistics &stats);
-
-#endif // STATISTICS_HPP

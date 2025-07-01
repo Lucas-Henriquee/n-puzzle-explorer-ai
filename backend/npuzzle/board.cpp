@@ -3,12 +3,11 @@
 
 Board::Board(size_t rows, size_t columns)
     : columns_size(columns), rows_size(rows)
-
 {
     srand(static_cast<unsigned int>(time(0)));
 
-    real_board.resize(rows_size, vector<size_t>(columns_size, 0));
-    goal_board.resize(rows_size, vector<size_t>(columns_size, 0));
+    real_board.resize(rows_size * columns_size);
+    goal_board.resize(rows_size * columns_size);
 
     read_goal_board();
     read_real_board();
@@ -16,6 +15,11 @@ Board::Board(size_t rows, size_t columns)
 
 Board::~Board()
 {
+}
+
+size_t Board::index(size_t i, size_t j) const
+{
+    return i * columns_size + j;
 }
 
 void Board::read_goal_board()
@@ -26,34 +30,35 @@ void Board::read_goal_board()
 
     if (choice != 's' && choice != 'S')
     {
-        // Preenche o tabuleiro objetivo com valores padrão
         for (size_t i = 0; i < rows_size; ++i)
         {
             cout << "Linha " << i + 1 << ": ";
             for (size_t j = 0; j < columns_size; ++j)
             {
+                size_t idx = index(i, j);
                 if (i == rows_size - 1 && j == columns_size - 1)
                 {
-                    cout << "0 "; // Espaço vazio
-                    goal_board[i][j] = 0;
-                    continue;
+                    goal_board[idx] = 0;
+                    cout << "0 ";
                 }
-                cout << (i * columns_size + j + 1) << " ";
-                goal_board[i][j] = i * columns_size + j + 1;
+                else
+                {
+                    goal_board[idx] = idx + 1;
+                    cout << goal_board[idx] << " ";
+                }
             }
             cout << endl;
         }
         return;
     }
 
-    else
-        cout << "Digite o tabuleiro objetivo (linha por linha, use 0 para o espaço vazio):" << endl;
-
+    cout << "Digite o tabuleiro objetivo (linha por linha, use 0 para o espaço vazio):" << endl;
     for (size_t i = 0; i < rows_size; ++i)
     {
         for (size_t j = 0; j < columns_size; ++j)
         {
-            cin >> goal_board[i][j];
+            size_t idx = index(i, j);
+            cin >> goal_board[idx];
         }
     }
 }
@@ -66,17 +71,13 @@ void Board::read_real_board()
 
     if (choice != 's' && choice != 'S')
     {
-        // Preenche o tabuleiro real com valores aleatórios
-        vector<size_t> numbers;
+        vector<size_t> numbers(rows_size * columns_size);
+        for (size_t i = 0; i < numbers.size(); ++i)
+            numbers[i] = i;
 
-        for (size_t i = 0; i < rows_size * columns_size; ++i)
+        for (size_t i = 0; i < numbers.size(); ++i)
         {
-            numbers.push_back(i);
-        }
-
-        for (size_t i = 0; i < rows_size * columns_size; ++i)
-        {
-            size_t j = rand() % (rows_size * columns_size);
+            size_t j = rand() % numbers.size();
             swap(numbers[i], numbers[j]);
         }
 
@@ -84,16 +85,17 @@ void Board::read_real_board()
         {
             for (size_t j = 0; j < columns_size; ++j)
             {
-                if (numbers[i * columns_size + j] == 0)
+                size_t idx = index(i, j);
+                real_board[idx] = numbers[idx];
+
+                if (real_board[idx] == 0)
                 {
                     empty_space_row = i;
                     empty_space_column = j;
                 }
-                real_board[i][j] = numbers[i * columns_size + j];
             }
         }
     }
-
     else
     {
         cout << "Digite o tabuleiro real (linha por linha, use 0 para o espaço vazio):" << endl;
@@ -101,17 +103,18 @@ void Board::read_real_board()
         {
             for (size_t j = 0; j < columns_size; ++j)
             {
-                if (i == rows_size - 1 && j == columns_size - 1)
+                size_t idx = index(i, j);
+                cin >> real_board[idx];
+                if (real_board[idx] == 0)
                 {
-                    real_board[i][j] = 0;
                     empty_space_row = i;
                     empty_space_column = j;
-                    continue;
                 }
-                cin >> real_board[i][j];
             }
         }
     }
+
+    print_board(real_board);
 }
 
 bool Board::end_game() const
@@ -119,79 +122,62 @@ bool Board::end_game() const
     return real_board == goal_board;
 }
 
-void Board::print_board(const vector<vector<size_t>> &b) const
+void Board::print_board(const vector<size_t> &flat_board) const
 {
-    for (const auto &row : b)
+    for (size_t i = 0; i < rows_size; ++i)
     {
-        for (const auto &cell : row)
+        for (size_t j = 0; j < columns_size; ++j)
         {
-            cout << cell << " ";
+            cout << flat_board[index(i, j)] << " ";
         }
         cout << endl;
     }
-    cout << endl;
 }
 
 bool Board::move(char direction)
 {
+    size_t index_current = index(empty_space_row, empty_space_column);
+    size_t index_target;
+
     switch (direction)
     {
-    case 'u':
-    case 'U':
-
-        if (empty_space_row == 0)
-        {
-            cout << "Movimento inválido! O espaço vazio já está na parte superior." << endl;
-            return false;
-        }
-
-        swap(real_board[empty_space_row][empty_space_column], real_board[empty_space_row - 1][empty_space_column]);
-        empty_space_row--;
-        break;
-
-    case 'd':
-    case 'D':
-
-        if (empty_space_row == rows_size - 1)
-        {
-            cout << "Movimento inválido! O espaço vazio já está na parte inferior." << endl;
-            return false;
-        }
-
-        swap(real_board[empty_space_row][empty_space_column], real_board[empty_space_row + 1][empty_space_column]);
-        empty_space_row++;
-        break;
-
-    case 'l':
     case 'L':
-
+    case 'l':
         if (empty_space_column == 0)
-        {
-            cout << "Movimento inválido! O espaço vazio já está na parte esquerda." << endl;
             return false;
-        }
-
-        swap(real_board[empty_space_row][empty_space_column], real_board[empty_space_row][empty_space_column - 1]);
+        index_target = index(empty_space_row, empty_space_column - 1);
         empty_space_column--;
         break;
 
-    case 'r':
     case 'R':
-
-        if (empty_space_column == columns_size - 1)
-        {
-            cout << "Movimento inválido! O espaço vazio já está na parte direita." << endl;
+    case 'r':
+        if (empty_space_column >= columns_size - 1)
             return false;
-        }
-
-        swap(real_board[empty_space_row][empty_space_column], real_board[empty_space_row][empty_space_column + 1]);
+        index_target = index(empty_space_row, empty_space_column + 1);
         empty_space_column++;
         break;
 
+    case 'U':
+    case 'u':
+        if (empty_space_row == 0)
+            return false;
+        index_target = index(empty_space_row - 1, empty_space_column);
+        empty_space_row--;
+        break;
+
+    case 'D':
+    case 'd':
+        if (empty_space_row >= rows_size - 1)
+            return false;
+        index_target = index(empty_space_row + 1, empty_space_column);
+        empty_space_row++;
+        break;
+
     default:
-        cout << "Direção inválida!" << endl;
         return false;
     }
+
+    swap(real_board[index_current], real_board[index_target]);
     return true;
 }
 

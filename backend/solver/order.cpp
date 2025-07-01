@@ -37,7 +37,7 @@ void OrderSearch(Board board)
         nodes_expanded++;
 
         // Achata o tabuleiro do estado atual
-        auto flat = flatten_board(currentState->get_board().real_board);
+        const auto &flat = currentState->get_board().real_board;
 
         // Se este estado já foi expandido antes, libera a memória
         if (closedSet.count(flat))
@@ -131,7 +131,7 @@ void OrderSearch(Board board)
                 */
 
                 // Achata o tabuleiro do sucessor para verificar se já foi visitado
-                auto flatSucc = flatten_board(newBoard.real_board);
+                const auto &flatSucc = newBoard.real_board;
 
                 // Ignora sucessores já visitados
                 if (closedSet.count(flatSucc))
@@ -143,7 +143,7 @@ void OrderSearch(Board board)
 
                 while (openState != nullptr)
                 {
-                    if (flatten_board(openState->get_board().real_board) == flatSucc)
+                    if (openState->get_board().real_board == flatSucc)
                     {
                         alreadyInOpenList = true;
                         break;
