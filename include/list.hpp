@@ -10,9 +10,9 @@ private:
     State *head;  // Ponteiro para o primeiro elemento da lista
     State *tail;  // Ponteiro para o último elemento da lista
     State *lower; // Ponteiro para o estado com o menor custo na lista
-
+    bool use_cost; // Flag para indicar se a lista deve usar custo para ordenação
 public:
-    List() : size(0), head(nullptr), tail(nullptr), lower(nullptr) {}
+    List(bool use_cost) : size(0), head(nullptr), tail(nullptr), lower(nullptr), use_cost(use_cost) {}
     ~List();
 
     size_t get_size() const { return size; }        // Método para obter o tamanho da lista

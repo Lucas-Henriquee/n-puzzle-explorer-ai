@@ -18,7 +18,7 @@ void DepthFirstSearch(Board initialBoard)
     unordered_set<vector<size_t>, VectorHash> closedSet; // Conjunto para armazenar estados fechados
     vector<State *> closedList;                          // Lista para armazenar estados fechados
 
-    List openList; // Lista para armazenar estados abertos
+    List openList(false); // Lista para armazenar estados abertos
 
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 

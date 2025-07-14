@@ -14,7 +14,7 @@ void OrderSearch(Board board)
     size_t nodes_visited = 0;   // Contador de nós visitados
     size_t total_branching = 0; // Soma total do número de sucessores gerados
 
-    List openList; // Lista de estados abertos
+    List openList(true); // Lista de estados abertos
     // List closedList = List();                                  // Lista de estados fechados
     unordered_set<vector<size_t>, VectorHash> closedSet; // Conjunto de estados já visitados para evitar repetições
 
@@ -89,6 +89,8 @@ void OrderSearch(Board board)
 
             if (newBoard.move(direction)) // Se o movimento for válido
             {
+                if (is_ancestor(currentState->get_parent(), newBoard.real_board))
+                    continue; // Se o novo tabuleiro já é um ancestral, ignora este sucessor
                 /*
                 {
                     State *successor = new State(id, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
@@ -140,20 +142,31 @@ void OrderSearch(Board board)
                 bool alreadyInOpenList = false;
 
                 State *openState = openList.get_head();
+                State *openAlread = nullptr;
 
                 while (openState != nullptr)
                 {
                     if (openState->get_board().real_board == flatSucc)
                     {
                         alreadyInOpenList = true;
+                        openAlread = openState; // Guarda o estado já existente na lista aberta
                         break;
                     }
                     openState = openState->get_next();
                 }
 
-                if (alreadyInOpenList)
-                    continue;
-
+                if (alreadyInOpenList){
+                    if (openAlread->get_cost() < currentState->get_cost() + 1)
+                    {
+                        // Se o estado já existe na lista aberta com custo menor, não adiciona o novo sucessor
+                        continue;
+                    }
+                    else
+                    {
+                        // Se o estado já existe na lista aberta com custo maior, remove o antigo
+                        openList.remove(openAlread);
+                    }
+                }
                 // Cria o novo estado sucessor com custo e profundidade incrementados em 1
                 State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
 

@@ -72,23 +72,23 @@ void List::remove(State *state)
             next_state->set_prev(prev_state); // Atualiza o anterior do estado seguinte
         }
     }
-
-    if (state == lower)
-    {
-        // Se o estado removido for o de menor custo, precisamos encontrar um novo menor custo
-        lower = head; // Começa do início da lista
-        State *current = head;
-
-        while (current != nullptr)
+    if(use_cost){
+        if (state == lower)
         {
-            if (current->get_cost() < lower->get_cost())
+            // Se o estado removido for o de menor custo, precisamos encontrar um novo menor custo
+            lower = head; // Começa do início da lista
+            State *current = head;
+
+            while (current != nullptr)
             {
-                lower = current; // Atualiza o menor custo se encontrar um estado com custo menor
+                if (current->get_cost() < lower->get_cost())
+                {
+                    lower = current; // Atualiza o menor custo se encontrar um estado com custo menor
+                }
+                current = current->get_next(); // Avança para o próximo estado
             }
-            current = current->get_next(); // Avança para o próximo estado
         }
     }
-    
     size--; // Decrementa o tamanho da lista
 }
 

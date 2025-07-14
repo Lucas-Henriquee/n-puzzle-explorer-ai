@@ -18,7 +18,7 @@ void BreadthFirstSearch(Board board)
     unordered_set<vector<size_t>, VectorHash> closed;  // Conjunto para armazenar estados fechados
     vector<State *> closedList;                        // Lista para armazenar estados fechados
 
-    List openList; // Lista de estados abertos
+    List openList(false); // Lista de estados abertos
 
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
