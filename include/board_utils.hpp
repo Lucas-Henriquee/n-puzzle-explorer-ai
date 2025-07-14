@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../include/defines.hpp"
+#include "../include/state.hpp"
 
 struct VectorHash
 {

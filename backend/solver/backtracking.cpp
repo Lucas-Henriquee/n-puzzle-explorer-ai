@@ -5,16 +5,6 @@
 #include "../include/backtracking.hpp"
 #include "../include/statistics.hpp"
 
-bool is_ancestor(State *node, const vector<size_t> &candidate_board)
-{
-    while (node != nullptr)
-    {
-        if (node->get_board().real_board == candidate_board)
-            return true;
-        node = node->get_parent();
-    }
-    return false;
-}
 
 bool backtrack_iterative(State *initialState, size_t &id, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, unordered_set<vector<size_t>, VectorHash> &visited, vector<State *> &solution_path)
 {
@@ -42,91 +32,55 @@ bool backtrack_iterative(State *initialState, size_t &id, size_t &nodes_expanded
         StackFrame &frame = stack.top();
         State *current = frame.state;
 
-        if (iterations % 100000 == 0)
+        if (current->get_board().end_game())
         {
-            cout << "Iterações: " << iterations
-                 << " | Pilha: " << stack.size()
-                 << " | Visitados: " << visited.size()
-                 << " | Expandidos: " << nodes_expanded
-                 << " | Último tabuleiro:\n";
+            // Reconstrói o caminho da solução
+            for (State *s = current; s != nullptr; s = s->get_parent())
+                solution_path.push_back(s);
 
-            const Board &b = current->get_board();
-            size_t rows = b.get_rows();
-            size_t cols = b.get_rows();
-            const vector<size_t> &flat = b.real_board;
-
-            for (size_t i = 0; i < rows; ++i)
-            {
-                for (size_t j = 0; j < cols; ++j)
-                {
-                    std::cout << flat[i * cols + j] << " ";
-                }
-                std::cout << "\n";
-            }
-            std::cout << "-----------------------------\n";
+            reverse(solution_path.begin(), solution_path.end());
+            cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaa" << endl;
+            return true;
         }
 
-        // Se esgotou todas as direções possíveis, faz o backtrack
-        if (frame.move_index >= frame.moves.size())
-        {
-            visited.erase(current->get_board().real_board);
-            delete current;
-            stack.pop();
-            continue;
-        }
-
-        // Pega a próxima direção a ser explorada
         char dir = frame.moves[frame.move_index++];
         Board newBoard = current->get_board();
 
         // Tenta mover
         if (!newBoard.move(dir))
-            continue;
-
+        {
+            continue; // Tenta a próxima direção
+        }
+        
         if (is_ancestor(current, newBoard.real_board))
             continue;
 
-        // Marca como visitado
-        visited.insert(newBoard.real_board);
-        nodes_visited++;
+        // Se esgotou todas as direções possíveis, faz o backtrack
+        if (frame.move_index >= frame.moves.size())
+        {
+            visited.erase(current->get_board().real_board);
+            cout << "Removendo aaaaaaaaaaaaaaaaa" << endl;
+            State *aux_current = current->get_parent();
+            delete current;
+            current = aux_current;
+            stack.pop();
+            continue;
+        }
 
+        
         // Cria novo estado
         State *successor = new State(id++, current->get_cost() + 1, current->get_depth() + 1, current, newBoard);
         nodes_expanded++;
         total_branching++;
 
-        if (visited.count(newBoard.real_board))
-            continue;
+        // Marca como visitado
+        visited.insert(newBoard.real_board);
+        nodes_visited++;
 
-        if (is_ancestor(current, newBoard.real_board))
-            continue;
-
-        // Se chegou à solução
-        if (newBoard.end_game())
-        {
-            // Reconstrói caminho
-            solution_path.clear();
-            State *s = successor;
-            while (s != nullptr)
-            {
-                solution_path.push_back(s);
-                s = s->get_parent();
-            }
-
-            reverse(solution_path.begin(), solution_path.end());
-
-            // Limpa os frames restantes da pilha (libera memória dos nós mortos)
-            while (!stack.empty())
-            {
-                delete stack.top().state;
-                stack.pop();
-            }
-
-            return true;
-        }
+        current = successor;
 
         // Continua para esse sucessor
-        stack.push(StackFrame(successor));
+        stack.push(StackFrame(current));
     }
 
     return false;
@@ -165,6 +119,7 @@ void BacktrackingSearch(Board initialBoard)
     stats.nodes_visited = nodes_visited;
     stats.total_branching = total_branching;
     stats.solution_found = found;
+    stats.solution_path = solution_path;
 
     if (found)
     {
