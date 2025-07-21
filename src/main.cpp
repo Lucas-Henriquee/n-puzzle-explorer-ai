@@ -31,7 +31,6 @@ int main()
     cin >> choice;
 
     int heuristic_choice;
-    string heuristic_name;
 
     if (choice == 6 || choice == 7 || choice == 8)
     {
@@ -47,22 +46,16 @@ int main()
         switch (heuristic_choice)
         {
         case 1:
-            heuristic_name = "manhattan";
             break;
         case 2:
-            heuristic_name = "euclidean";
             break;
         case 3:
-            heuristic_name = "misplaced_tiles";
             break;
         case 4:
-            heuristic_name = "hamming";
             break;
         case 5:
-            heuristic_name = "linear_conflict";
             break;
         case 6:
-            heuristic_name = "zero";
             break;
         default:
             cout << "Heurística inválida!\n";
@@ -88,14 +81,14 @@ int main()
         initialBoard.start_interactive_session();
         break;
     case 6:
-        GreedySearch(initialBoard, heuristic_name);
+        GreedySearch(initialBoard, heuristic_choice);
         break;
     case 7:
-        // AStarSearch(initialBoard, heuristic_name);
+        // AStarSearch(initialBoard, heuristic_choice);
         cout << "A* Search ainda não implementado.\n";
         break;
     case 8:
-        // IDAStarSearch(initialBoard, heuristic_name);
+        // IDAStarSearch(initialBoard, heuristic_choice);
         cout << "IDA* Search ainda não implementado.\n";
         break;
     default:

@@ -3,4 +3,4 @@
 #include "../include/defines.hpp"
 #include "../include/board.hpp"
 
-void GreedySearch(Board board, const string &heuristic_name);
+void GreedySearch(Board board, const int &heuristic_choice);

@@ -7,7 +7,8 @@
 #include "../include/statistics.hpp"
 #include "../include/board_utils.hpp"
 
-void GreedySearch(Board board, const string &heuristic_name) {
+void GreedySearch(Board board, const int &heuristic_choice)
+{
     size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
     size_t nodes_visited = 0;   // Contador de nós visitados
@@ -17,11 +18,11 @@ void GreedySearch(Board board, const string &heuristic_name) {
     unordered_set<vector<size_t>, VectorHash> closed;  // Conjunto para armazenar estados fechados
     vector<State *> closedList;                        // Lista para armazenar estados fechados
 
-    List openList(false); // Lista de estados abertos
+    List openList(true); // Lista de estados abertos
 
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
-    double heuristic_value = calculate_heuristic(board, heuristic_name); // Calcula a heurística inicial
+    double heuristic_value = calculate_heuristic(board, heuristic_choice); // Calcula o valor da heurística inicial
 
     State *initialState = new State(id++, 0, heuristic_value, 0, nullptr, board); // Estado inicial
 
@@ -35,7 +36,7 @@ void GreedySearch(Board board, const string &heuristic_name) {
 
     while (openList.is_not_empty())
     {
-        State *currentState = openList.get_lower_cost(); // Obtém o estado atual
+        State *currentState = openList.get_lower_heuristic(); // Obtém o estado atual
 
         openList.remove(currentState);                       // Remove o estado atual da lista aberta
         closed.insert(currentState->get_board().real_board); // Adiciona o estado atual ao conjunto de fechados
@@ -73,8 +74,7 @@ void GreedySearch(Board board, const string &heuristic_name) {
                 visited.insert(newBoard.real_board);
                 nodes_visited++;
 
-                heuristic_value = calculate_heuristic(newBoard, heuristic_name); // Calcula a heurística do novo estado
-
+                heuristic_value = calculate_heuristic(newBoard, heuristic_choice);
                 State *successor = new State(id++, currentState->get_cost() + 1, heuristic_value, currentState->get_depth() + 1, currentState, newBoard);
 
                 openList.add(successor);
@@ -90,7 +90,7 @@ void GreedySearch(Board board, const string &heuristic_name) {
 
     // Monta as estatísticas
     SearchStatistics stats;
-    stats.algorithm_name = "Breadth-First Search (BFS)";
+    stats.algorithm_name = "Greedy Search (GS)";
     stats.heuristic_name = "";
     stats.elapsed_time = elapsed.count();
     stats.nodes_expanded = nodes_expanded;
@@ -105,4 +105,6 @@ void GreedySearch(Board board, const string &heuristic_name) {
         stats.solution_depth = solution_path.back()->get_depth();
         stats.solution_path = solution_path;
     }
+
+    print_statistics(stats);
 }
