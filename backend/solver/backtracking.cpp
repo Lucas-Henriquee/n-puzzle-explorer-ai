@@ -69,7 +69,7 @@ bool backtrack_iterative(State *initialState, size_t &id, size_t &nodes_expanded
 
         
         // Cria novo estado
-        State *successor = new State(id++, current->get_cost() + 1, current->get_depth() + 1, current, newBoard);
+        State *successor = new State(id++, current->get_cost() + 1, 0, current->get_depth() + 1, current, newBoard);
         nodes_expanded++;
         total_branching++;
 
@@ -104,7 +104,7 @@ void BacktrackingSearch(Board initialBoard)
     visited.insert(initialBoard.real_board);
     nodes_visited++;
 
-    State *initialState = new State(id++, 0, 0, nullptr, initialBoard);
+    State *initialState = new State(id++, 0, 0, 0, nullptr, initialBoard);
 
     bool found = backtrack_iterative(initialState, id, nodes_expanded, nodes_visited, total_branching, visited, solution_path);
 

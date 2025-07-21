@@ -16,7 +16,7 @@ void List::add(State *state)
         state->set_prev(tail); // Define o anterior do novo estado como o último
         tail = state;          // Atualiza o último estado para o novo estado
 
-        if (state->get_cost() < lower->get_cost())
+        if (state->get_total_cost() < lower->get_total_cost())
         {
             lower = state; // Se o novo estado tem custo menor, atualiza o menor custo
         }

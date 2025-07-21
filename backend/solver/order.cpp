@@ -22,7 +22,7 @@ void OrderSearch(Board board)
 
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
-    State *initialState = new State(id++, 0, 0, nullptr, board); // Estado inicial
+    State *initialState = new State(id++, 0, 0, 0, nullptr, board); // Estado inicial
 
     openList.add(initialState); // Adiciona o estado inicial à lista aberta
 
@@ -72,7 +72,7 @@ void OrderSearch(Board board)
                 visited.insert(newBoard.real_board);
                 nodes_visited++;
 
-                State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
+                State *successor = new State(id++, currentState->get_cost() + 1, 0, currentState->get_depth() + 1, currentState, newBoard);
 
                 openList.add(successor);
                 successors_this_node++;

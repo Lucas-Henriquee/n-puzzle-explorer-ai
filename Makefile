@@ -11,14 +11,16 @@ BUILD_DIR := build
 BACKEND_NPUZZLE_DIR := $(BACKEND_DIR)/npuzzle
 BACKEND_SOLVER_DIR := $(BACKEND_DIR)/solver
 BACKEND_UTILS_DIR := $(BACKEND_DIR)/utils
+BACKEND_HEURISTICS_DIR := $(BACKEND_DIR)/heuristics
 
 # Source files
 NPUZZLE_SRCS := $(wildcard $(BACKEND_NPUZZLE_DIR)/*.cpp)
 SOLVER_SRCS := $(wildcard $(BACKEND_SOLVER_DIR)/*.cpp)
 SRC_SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 UTILS_SRCS := $(wildcard $(BACKEND_UTILS_DIR)/*.cpp)
+HEURISTICS_SRCS := $(wildcard $(BACKEND_HEURISTICS_DIR)/*.cpp)
 
-SRCS := $(NPUZZLE_SRCS) $(SOLVER_SRCS)  $(UTILS_SRCS) $(SRC_SRCS)
+SRCS := $(NPUZZLE_SRCS) $(SOLVER_SRCS)  $(UTILS_SRCS) $(HEURISTICS_SRCS) $(SRC_SRCS)
 
 # Object files
 OBJS := $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(subst /,_, $(SRCS)))
@@ -64,6 +66,11 @@ $(BUILD_DIR)/backend_solver_%.o: $(BACKEND_SOLVER_DIR)/%.cpp $(DEPS)
 
 # Rule to build .o from backend/utils
 $(BUILD_DIR)/backend_utils_%.o: $(BACKEND_UTILS_DIR)/%.cpp $(DEPS)
+	$(MKDIR_CMD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Rule to build .o from backend/heuristics
+$(BUILD_DIR)/backend_heuristics_%.o: $(BACKEND_HEURISTICS_DIR)/%.cpp $(DEPS)
 	$(MKDIR_CMD)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 

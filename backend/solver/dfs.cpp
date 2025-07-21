@@ -23,7 +23,7 @@ void DepthFirstSearch(Board initialBoard)
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
     // Cria o estado inicial com custo 0 e profundidade 0
-    State *initialState = new State(id++, 0, 0, nullptr, initialBoard);
+    State *initialState = new State(id++, 0, 0, 0, nullptr, initialBoard);
     openList.add(initialState); // Adiciona o estado inicial à lista aberta
 
     visited.insert(initialBoard.real_board); // Armazena o estado inicial como visitado
@@ -75,7 +75,7 @@ void DepthFirstSearch(Board initialBoard)
                 nodes_visited++;                     // Incrementa o número de nós visitados
 
                 // Cria o novo estado sucessor
-                State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
+                State *successor = new State(id++, currentState->get_cost() + 1, 0, currentState->get_depth() + 1, currentState, newBoard);
 
                 openList.add(successor); // Adiciona o sucessor à lista aberta
                 successors_this_node++;  // Incrementa o número de sucessores gerados
