@@ -3,196 +3,105 @@
 #include "../include/list.hpp"
 #include "../include/state.hpp"
 #include "../include/board_utils.hpp"
-#include "../include/order.hpp"
+#include "../include/bfs.hpp"
 #include "../include/statistics.hpp"
 
-// Função que realiza a Busca Ordenada
+// Implementação da Busca Ordenada (OS)
 void OrderSearch(Board board)
 {
-    size_t id = 0;              // ID único para cada estado gerado
+    size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
     size_t nodes_visited = 0;   // Contador de nós visitados
-    size_t total_branching = 0; // Soma total do número de sucessores gerados
+    size_t total_branching = 0; // Contador do total de ramificações
+
+    unordered_set<vector<size_t>, VectorHash> visited; // Conjunto para armazenar estados visitados
+    unordered_set<vector<size_t>, VectorHash> closed;  // Conjunto para armazenar estados fechados
+    vector<State *> closedList;                        // Lista para armazenar estados fechados
 
     List openList(true); // Lista de estados abertos
-    // List closedList = List();                                  // Lista de estados fechados
-    unordered_set<vector<size_t>, VectorHash> closedSet; // Conjunto de estados já visitados para evitar repetições
 
-    // Cria o estado inicial a partir do tabuleiro dado
-    State *initialState = new State(id++, 0, 0, nullptr, board);
+    auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
-    openList.add(initialState); // Adiciona o estado inicial à lista aberta para expansão
-    nodes_visited++;
+    State *initialState = new State(id++, 0, 0, nullptr, board); // Estado inicial
 
-    auto start_time = chrono::steady_clock::now();
+    openList.add(initialState); // Adiciona o estado inicial à lista aberta
 
-    vector<State *> solution_path;
+    visited.insert(board.real_board); // Adiciona o estado inicial ao conjunto de visitados
+    nodes_visited++;                  // Incrementa o contador de nós visitados
+
+    bool found = false;            // Variável para indicar se a solução foi encontrada
+    vector<State *> solution_path; // Vetor para armazenar o caminho da solução
 
     while (openList.is_not_empty())
     {
-        // Pega o estado de menor custo da lista aberta
-        State *currentState = openList.get_lower_cost();
+        State *currentState = openList.get_lower_cost(); // Obtém o estado atual
 
-        openList.remove(currentState); // Remove o estado escolhido da lista aberta para expandir
+        openList.remove(currentState);                       // Remove o estado atual da lista aberta
+        closed.insert(currentState->get_board().real_board); // Adiciona o estado atual ao conjunto de fechados
+
+        closedList.push_back(currentState);
+
         nodes_expanded++;
 
-        // Achata o tabuleiro do estado atual
-        const auto &flat = currentState->get_board().real_board;
-
-        // Se este estado já foi expandido antes, libera a memória
-        if (closedSet.count(flat))
-        {
-            delete currentState;
-            continue;
-        }
-
-        // Marca o estado atual como visitado
-        closedSet.insert(flat);
-
-        // Verifica se o estado atual é o objetivo do problema
+        // Verifica se o estado atual é a solução
         if (currentState->get_board().end_game())
         {
-            auto end_time = chrono::steady_clock::now();
-            chrono::duration<double> elapsed = end_time - start_time;
+            found = true;
 
-            vector<State *> path;
-
+            // Reconstrução do caminho
             for (State *s = currentState; s != nullptr; s = s->get_parent())
-                path.push_back(s);
+                solution_path.push_back(s);
 
-            reverse(path.begin(), path.end());
+            reverse(solution_path.begin(), solution_path.end());
 
-            solution_path = path;
-
-            SearchStatistics stats;
-            stats.algorithm_name = "Ordered Search";
-            stats.heuristic_name = "";
-            stats.elapsed_time = elapsed.count();
-            stats.nodes_expanded = nodes_expanded;
-            stats.nodes_visited = nodes_visited;
-            stats.total_branching = total_branching;
-            stats.solution_found = true;
-            stats.solution_cost = currentState->get_cost();
-            stats.solution_depth = currentState->get_depth();
-            stats.solution_path = solution_path;
-
-            print_statistics(stats);
-
-            return;
+            break;
         }
 
-        size_t successors_this_node = 0; // Contador de sucessores gerados a partir do estado atual
+        size_t successors_this_node = 0;
 
+        // Gera os sucessores do estado atual e os adiciona à lista aberta
         for (char direction : {'U', 'D', 'L', 'R'})
         {
-            Board newBoard = currentState->get_board(); // Cópia do tabuleiro atual para tentar movimento
+            Board newBoard = currentState->get_board(); // Cria uma cópia do tabuleiro atual
 
-            if (newBoard.move(direction)) // Se o movimento for válido
+            if (newBoard.move(direction))
             {
-                if (is_ancestor(currentState->get_parent(), newBoard.real_board))
-                    continue; // Se o novo tabuleiro já é um ancestral, ignora este sucessor
-                /*
-                {
-                    State *successor = new State(id, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
-                    id++; // Incrementa o ID para o próximo sucessor
-                    // Verifica se o sucessor já está na lista fechada
-                    bool alreadyInClosedList = false;
-                    State *closedState = closedList.get_head();
-                    while (closedState != nullptr)
-                    {
-                        if (closedState->get_board().real_board == successor->get_board().real_board)
-                        {
-                            alreadyInClosedList = true; // O sucessor já está na lista fechada
-                            break;
-                        }
-                        closedState = closedState->get_next(); // Avança para o próximo estado na lista
-                    }
-                    if (alreadyInClosedList)
-                    {
-                        delete successor; // Libera a memória do sucessor se já estiver na lista fechada
-                        continue;         // Pula para o próximo sucessor
-                    }
-                    // Verifica se o sucessor já está na lista aberta
-                    bool alreadyInOpenList = false;
-                    State *openState = openList.get_head();
-                    while (openState != nullptr)
-                    {
-                        if (openState->get_board().real_board == successor->get_board().real_board)
-                        {
-                            alreadyInOpenList = true; // O sucessor já está na lista aberta
-                            break;
-                        }
-                    }
-                    if (alreadyInOpenList)
-                    {
-                        delete successor; // Libera a memória do sucessor se já estiver na lista aberta
-                        continue;         // Pula para o próximo sucessor
-                    }
-                    openList.add(successor); // Adiciona o sucessor à lista aberta
-                }
-                */
-
-                // Achata o tabuleiro do sucessor para verificar se já foi visitado
-                const auto &flatSucc = newBoard.real_board;
-
-                // Ignora sucessores já visitados
-                if (closedSet.count(flatSucc))
+                if (visited.count(newBoard.real_board) || closed.count(newBoard.real_board))
                     continue;
 
-                bool alreadyInOpenList = false;
+                visited.insert(newBoard.real_board);
+                nodes_visited++;
 
-                State *openState = openList.get_head();
-                State *openAlread = nullptr;
-
-                while (openState != nullptr)
-                {
-                    if (openState->get_board().real_board == flatSucc)
-                    {
-                        alreadyInOpenList = true;
-                        openAlread = openState; // Guarda o estado já existente na lista aberta
-                        break;
-                    }
-                    openState = openState->get_next();
-                }
-
-                if (alreadyInOpenList){
-                    if (openAlread->get_cost() < currentState->get_cost() + 1)
-                    {
-                        // Se o estado já existe na lista aberta com custo menor, não adiciona o novo sucessor
-                        continue;
-                    }
-                    else
-                    {
-                        // Se o estado já existe na lista aberta com custo maior, remove o antigo
-                        openList.remove(openAlread);
-                    }
-                }
-                // Cria o novo estado sucessor com custo e profundidade incrementados em 1
                 State *successor = new State(id++, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
 
-                openList.add(successor); // Adiciona sucessor na lista aberta
-
-                nodes_visited++;
+                openList.add(successor);
                 successors_this_node++;
             }
         }
 
-        total_branching += successors_this_node; // Atualiza total de ramificações com o número gerado neste nó
-
-        delete currentState;
+        total_branching += successors_this_node;
     }
 
     auto end_time = chrono::steady_clock::now();
     chrono::duration<double> elapsed = end_time - start_time;
 
+    // Monta as estatísticas
     SearchStatistics stats;
-    stats.algorithm_name = "Ordered Search";
+    stats.algorithm_name = "Order Search (OS)";
     stats.heuristic_name = "";
     stats.elapsed_time = elapsed.count();
     stats.nodes_expanded = nodes_expanded;
     stats.nodes_visited = nodes_visited;
     stats.total_branching = total_branching;
-    stats.solution_found = false;
+    stats.solution_found = found;
+    stats.closed_list = closedList;
+
+    if (found)
+    {
+        stats.solution_cost = solution_path.back()->get_cost();
+        stats.solution_depth = solution_path.back()->get_depth();
+        stats.solution_path = solution_path;
+    }
 
     print_statistics(stats);
 }
