@@ -33,7 +33,7 @@ bool loadBoardFromFile(const string &filename, size_t &n, size_t &m, vector<size
         file >> initial[i];
         if(initial[i] == 0)
         {
-            empty_row = i/n;
+            empty_row = i/m;
             empty_column = i%m;
         }
     }
@@ -71,13 +71,13 @@ int main(int argc, char *argv[])
     }
 
     cout << "Selecione o algoritmo:\n";
-    cout << "1 - BFS\n";
-    cout << "2 - DFS\n";
-    cout << "3 - Backtracking\n";
-    cout << "4 - Greedy Search\n";
-    cout << "5 - A* Search\n";
+    cout << "1 - Backtracking\n";
+    cout << "2 - Order\n";
+    cout << "3 - BFS\n";
+    cout << "4 - DFS\n";
+    cout << "5 - Greedy Search\n";
     cout << "6 - IDA* Search\n";
-    cout << "7 - Order\n";
+    cout << "7 - A* Search\n";
     cout << "8 - Interação manual\n";
 
     size_t choice;
@@ -89,11 +89,11 @@ int main(int argc, char *argv[])
     {
         cout << "Selecione a heurística:\n";
         cout << "1 - Manhattan\n";
-        cout << "2 - Euclidean\n";
-        cout << "3 - Misplaced Tiles\n";
-        cout << "4 - Hamming\n";
-        cout << "5 - Linear Conflict\n";
-        cout << "6 - Zero\n";
+        cout << "2 - Euclidean\n";  //feita
+        cout << "3 - Misplaced Tiles\n"; //feita
+        cout << "4 - Linear Conflict\n";
+        cout << "5 - Manhattan + Relative Inversions\n";
+        cout << "6 - Weighted Sum\n";
         cin >> heuristic_choice;
 
         switch (heuristic_choice)
@@ -119,25 +119,25 @@ int main(int argc, char *argv[])
     switch (choice)
     {
     case 1:
-        BreadthFirstSearch(initialBoard);
-        break;
-    case 2:
-        DepthFirstSearch(initialBoard);
-        break;
-    case 3:
         BacktrackingStarter(initialBoard);
         break;
-    case 4:
+    case 2:
         OrderSearch(initialBoard);
+        break;
+    case 3:
+        BreadthFirstSearch(initialBoard);
+        break;
+    case 4:
+        DepthFirstSearch(initialBoard);
         break;
     case 5:
         GreedySearch(initialBoard, heuristic_choice);
         break;
     case 6:
-        AStarSearch(initialBoard, heuristic_choice);
+        IDAStarter(initialBoard, heuristic_choice);
         break;
     case 7:
-        IDAStarter(initialBoard, heuristic_choice);
+        AStarSearch(initialBoard, heuristic_choice);
         break;
     case 8:
         initialBoard.start_interactive_session();

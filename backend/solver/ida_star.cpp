@@ -24,7 +24,7 @@ void IDAStarter(Board board, const int &heuristic_choice)
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
     while(true)
     {
-        new_baseline = IDAStarSearch(board, heuristic_choice, baseline, visited, closed, closedList, nodes_expanded, nodes_visited, total_branching, id, found, nullptr); // Chama a função de busca IDA*
+        new_baseline = IDAStarSearch(board, heuristic_choice, baseline, visited, closedList, nodes_expanded, nodes_visited, total_branching, id, found, nullptr); // Chama a função de busca IDA*
         if(new_baseline == baseline) // Se não houve aumento do baseline
         {
             auto end_time = chrono::steady_clock::now(); // Marca o tempo de fim da busca
@@ -65,24 +65,22 @@ void IDAStarter(Board board, const int &heuristic_choice)
 }
 
 double IDAStarSearch(Board board, const int &heuristic_choice, double baseline,
-                     unordered_set<vector<size_t>, VectorHash> &visited, unordered_set<vector<size_t>, VectorHash> &closed,
+                     unordered_set<vector<size_t>, VectorHash> &visited,
                      vector<State *> &closedList, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, size_t &id,bool &found, State *parent)
 {
+    double lower_new_baseline = -1; // Inicializa o menor novo baseline como -1
     double new_baseline = -1; // Inicializa o novo baseline como -1
     State *currentState = nullptr; // Inicializa o estado atual como nulo
     if (parent == nullptr) // Se o estado pai for nulo, cria o estado inicial
     {
         currentState = new State(id++, 0, 0 + calculate_heuristic(board, heuristic_choice), 0, nullptr, board); // Cria o estado inicial
         visited.insert(board.real_board); // Adiciona o estado inicial ao conjunto de visitados
-        nodes_visited++; // Incrementa o contador de nós visitados
     }
     else{
         currentState = new State(id++, parent->get_cost() + 1, calculate_heuristic(board, heuristic_choice), parent->get_depth() + 1, parent, board); // Cria o estado atual
         visited.insert(currentState->get_board().real_board); // Adiciona o estado atual ao conjunto de visitados
-        nodes_visited++; // Incrementa o contador de nós visitados
     }
 
-    closed.insert(currentState->get_board().real_board); // Adiciona o estado atual ao conjunto de fechados
     closedList.push_back(currentState); // Adiciona o estado atual à lista de fechados
 
     nodes_expanded++; // Incrementa o contador de nós expandidos
@@ -99,33 +97,31 @@ double IDAStarSearch(Board board, const int &heuristic_choice, double baseline,
         if (!newBoard.move(direction)) // Tenta mover o espaço vazio na direção especificada
             continue; // Se o movimento não for válido, continua para a próxima direção
 
-        State *successor = new State(id++, currentState->get_cost() + 1, calculate_heuristic(newBoard, heuristic_choice), currentState->get_depth() + 1, currentState, newBoard); // Cria o sucessor
+        if (visited.find(newBoard.real_board) != visited.end()) // Verifica se o sucessor já foi visitado
+        {
+            continue; // Continua para o próximo sucessor
+        }
+        if (calculate_heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 > baseline) // Verifica se o custo total do sucessor é maior que o baseline
+        {
+            if (new_baseline == -1 || calculate_heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 < new_baseline) // Se o novo baseline ainda não foi definido ou é maior que o custo do sucessor
+                new_baseline = calculate_heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1; // Atualiza o novo baseline
+            if (new_baseline < lower_new_baseline || lower_new_baseline == -1)
+                lower_new_baseline = new_baseline;
+            continue; // Continua para o próximo sucessor
+        }
 
-        if (visited.find(successor->get_board().real_board) != visited.end()) // Verifica se o sucessor já foi visitado
-        {
-            delete successor; // Libera a memória do sucessor
-            continue; // Continua para o próximo sucessor
-        }
-        if (closed.find(successor->get_board().real_board) != closed.end()) // Verifica se o sucessor já está fechado
-        {
-            delete successor; // Libera a memória do sucessor
-            continue; // Continua para o próximo sucessor
-        }
-        if (successor->get_total_cost() > baseline) // Verifica se o custo total do sucessor é maior que o baseline
-        {
-            if (new_baseline == -1 || successor->get_total_cost() < new_baseline) // Se o novo baseline ainda não foi definido ou é maior que o custo do sucessor
-                new_baseline = successor->get_total_cost(); // Atualiza o novo baseline
-            delete successor; // Libera a memória do sucessor
-            continue; // Continua para o próximo sucessor
-        }
-        new_baseline = IDAStarSearch(newBoard, heuristic_choice, baseline, visited, closed, closedList, nodes_expanded, nodes_visited, total_branching, id, found, currentState); // Chama recursivamente a busca IDA*
+        new_baseline = IDAStarSearch(newBoard, heuristic_choice, baseline, visited, closedList, nodes_expanded, nodes_visited, total_branching, id, found, currentState); // Chama recursivamente a busca IDA*
+        if (new_baseline < lower_new_baseline || lower_new_baseline == -1)
+            lower_new_baseline = new_baseline;
+
         if (found) // Se a solução foi encontrada
         {
-            return new_baseline; // Retorna o novo baseline
+            return lower_new_baseline; // Retorna o novo baseline
         }
         total_branching++; // Incrementa o contador de ramificações
-        delete successor; // Libera a memória do sucessor
     }
+    closedList.pop_back(); // Remove o estado atual da lista de fechados
+    visited.erase(currentState->get_board().real_board); // Remove o estado atual do conjunto
     delete currentState; // Libera a memória do estado atual
-    return new_baseline; // Retorna o novo baseline
+    return lower_new_baseline; // Retorna o novo baseline
 }

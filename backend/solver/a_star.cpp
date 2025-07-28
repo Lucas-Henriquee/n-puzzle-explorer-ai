@@ -90,7 +90,7 @@ void AStarSearch(Board board, const int &heuristic_choice)
 
     // Monta as estatísticas
     SearchStatistics stats;
-    stats.algorithm_name = "Greedy Search (GS)";
+    stats.algorithm_name = "A Star (A*)";
     stats.heuristic_name = "";
     stats.elapsed_time = elapsed.count();
     stats.nodes_expanded = nodes_expanded;
