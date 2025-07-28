@@ -22,7 +22,7 @@ void GreedySearch(Board board, const int &heuristic_choice)
 
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
-    double heuristic_value = calculate_heuristic(board, heuristic_choice); // Calcula o valor da heurística inicial
+    double heuristic_value = heuristic(board, heuristic_choice); // Calcula o valor da heurística inicial
 
     State *initialState = new State(id++, 0, heuristic_value, 0, nullptr, board); // Estado inicial
 
@@ -74,7 +74,7 @@ void GreedySearch(Board board, const int &heuristic_choice)
                 visited.insert(newBoard.real_board);
                 nodes_visited++;
 
-                heuristic_value = calculate_heuristic(newBoard, heuristic_choice);
+                heuristic_value = heuristic(newBoard, heuristic_choice);
                 State *successor = new State(id++, currentState->get_cost() + 1, heuristic_value, currentState->get_depth() + 1, currentState, newBoard);
 
                 openList.add(successor);
@@ -91,13 +91,36 @@ void GreedySearch(Board board, const int &heuristic_choice)
     // Monta as estatísticas
     SearchStatistics stats;
     stats.algorithm_name = "Greedy Search (GS)";
-    stats.heuristic_name = "";
     stats.elapsed_time = elapsed.count();
     stats.nodes_expanded = nodes_expanded;
     stats.nodes_visited = nodes_visited;
     stats.total_branching = total_branching;
     stats.solution_found = found;
     stats.closed_list = closedList;
+
+    switch (heuristic_choice)
+    {
+    case 1:
+        stats.heuristic_name = "Manhattan";
+        break;
+    case 2:
+        stats.heuristic_name = "Euclidean";
+        break;
+    case 3:
+        stats.heuristic_name = "Misplaced Tiles";
+        break;
+    case 4:
+        stats.heuristic_name = "Linear Conflict";
+        break;
+    case 5:
+        stats.heuristic_name = "Manhattan Inversions";
+        break;
+    case 6:
+        stats.heuristic_name = "Weighted Sum";
+        break;
+    default:
+        stats.heuristic_name = "Unknown Heuristic";
+    }
 
     if (found)
     {

@@ -16,7 +16,9 @@ Board::Board(size_t rows, size_t columns)
 }
 
 Board::Board(size_t rows, size_t columns, vector<size_t> real_board, vector<size_t> goal_board, size_t empty_row, size_t empty_column)
-    : columns_size(columns), rows_size(rows), real_board(real_board), goal_board(goal_board), empty_space_row(empty_row), empty_space_column(empty_column)
+    : empty_space_row(empty_row), empty_space_column(empty_column),
+      columns_size(columns), rows_size(rows),
+      real_board(real_board), goal_board(goal_board)
 {
 }
 

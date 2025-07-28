@@ -52,7 +52,7 @@ void print_statistics(const SearchStatistics &stats)
         cout << "Solução encontrada usando: " << stats.algorithm_name << endl;
         if (!stats.heuristic_name.empty())
             cout << "Heurística utilizada: " << stats.heuristic_name << endl;
-
+        
         cout << "\nProfundidade da solução: " << stats.solution_depth << endl;
         cout << "Custo da solução: " << stats.solution_cost << endl;
 

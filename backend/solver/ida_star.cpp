@@ -14,7 +14,7 @@ void IDAStarter(Board board, const int &heuristic_choice)
     size_t nodes_visited = 0;   // Contador de nós visitados
     size_t total_branching = 0; // Contador do total de ramificações
 
-    double baseline = calculate_heuristic(board, heuristic_choice); // Calcula o valor da heurística inicial
+    double baseline = heuristic(board, heuristic_choice); // Calcula o valor da heurística inicial
     unordered_set<vector<size_t>, VectorHash> visited; // Conjunto para armazenar estados visitados
     unordered_set<vector<size_t>, VectorHash> closed;  // Conjunto para armazenar estados fechados
     vector<State *> closedList;                        // Lista para armazenar estados fechados
@@ -29,15 +29,40 @@ void IDAStarter(Board board, const int &heuristic_choice)
         {
             auto end_time = chrono::steady_clock::now(); // Marca o tempo de fim da busca
             chrono::duration<double> elapsed = end_time - start_time; // Calcula o tempo decorrido
+
             SearchStatistics stats;
             stats.algorithm_name = "IDA STAR (IDA*)";
-            stats.heuristic_name = "";
             stats.elapsed_time = elapsed.count();
             stats.nodes_expanded = nodes_expanded;
             stats.nodes_visited = nodes_visited;
             stats.total_branching = total_branching;
             stats.solution_found = found;
             stats.closed_list = closedList;
+
+            switch (heuristic_choice)
+            {
+            case 1:
+                stats.heuristic_name = "Manhattan";
+                break;
+            case 2:
+                stats.heuristic_name = "Euclidean";
+                break;
+            case 3:
+                stats.heuristic_name = "Misplaced Tiles";
+                break;
+            case 4:
+                stats.heuristic_name = "Linear Conflict";
+                break;
+            case 5:
+                stats.heuristic_name = "Manhattan Inversions";
+                break;
+            case 6:
+                stats.heuristic_name = "Weighted Sum";
+                break;
+            default:
+                stats.heuristic_name = "Unknown Heuristic";
+            }
+
             State *last_state = closedList.back();
             if (found)
             {
@@ -73,11 +98,11 @@ double IDAStarSearch(Board board, const int &heuristic_choice, double baseline,
     State *currentState = nullptr; // Inicializa o estado atual como nulo
     if (parent == nullptr) // Se o estado pai for nulo, cria o estado inicial
     {
-        currentState = new State(id++, 0, 0 + calculate_heuristic(board, heuristic_choice), 0, nullptr, board); // Cria o estado inicial
+        currentState = new State(id++, 0, 0 + heuristic(board, heuristic_choice), 0, nullptr, board); // Cria o estado inicial
         visited.insert(board.real_board); // Adiciona o estado inicial ao conjunto de visitados
     }
     else{
-        currentState = new State(id++, parent->get_cost() + 1, calculate_heuristic(board, heuristic_choice), parent->get_depth() + 1, parent, board); // Cria o estado atual
+        currentState = new State(id++, parent->get_cost() + 1, heuristic(board, heuristic_choice), parent->get_depth() + 1, parent, board); // Cria o estado atual
         visited.insert(currentState->get_board().real_board); // Adiciona o estado atual ao conjunto de visitados
     }
 
@@ -101,10 +126,10 @@ double IDAStarSearch(Board board, const int &heuristic_choice, double baseline,
         {
             continue; // Continua para o próximo sucessor
         }
-        if (calculate_heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 > baseline) // Verifica se o custo total do sucessor é maior que o baseline
+        if (heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 > baseline) // Verifica se o custo total do sucessor é maior que o baseline
         {
-            if (new_baseline == -1 || calculate_heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 < new_baseline) // Se o novo baseline ainda não foi definido ou é maior que o custo do sucessor
-                new_baseline = calculate_heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1; // Atualiza o novo baseline
+            if (new_baseline == -1 || heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 < new_baseline) // Se o novo baseline ainda não foi definido ou é maior que o custo do sucessor
+                new_baseline = heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1; // Atualiza o novo baseline
             if (new_baseline < lower_new_baseline || lower_new_baseline == -1)
                 lower_new_baseline = new_baseline;
             continue; // Continua para o próximo sucessor
