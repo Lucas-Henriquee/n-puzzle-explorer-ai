@@ -5,108 +5,33 @@
 #include "../include/backtracking.hpp"
 #include "../include/statistics.hpp"
 
-
-bool backtrack_iterative(State *initialState, size_t &id, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, unordered_set<vector<size_t>, VectorHash> &visited, vector<State *> &solution_path)
+// Função principal do Backtracking
+void BacktrackingStarter(Board initialBoard)
 {
-    // Strutura para armazenar o estado atual e as direções a serem exploradas
-    struct StackFrame
-    {
-        State *state;
-        vector<char> moves;
-        size_t move_index;
-
-        StackFrame(State *s) : state(s), moves({'U', 'D', 'L', 'R'}), move_index(0) {}
-    };
-
-    // Variáveis para estatísticas
-    size_t iterations = 0;
-
-    // Pilha para armazenar os frames de execução
-    stack<StackFrame> stack;
-    stack.push(StackFrame(initialState));
-
-    while (!stack.empty())
-    {
-        iterations++;
-
-        StackFrame &frame = stack.top();
-        State *current = frame.state;
-
-        if (current->get_board().end_game())
-        {
-            // Reconstrói o caminho da solução
-            for (State *s = current; s != nullptr; s = s->get_parent())
-                solution_path.push_back(s);
-
-            reverse(solution_path.begin(), solution_path.end());
-            cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaa" << endl;
-            return true;
-        }
-
-        char dir = frame.moves[frame.move_index++];
-        Board newBoard = current->get_board();
-
-        // Tenta mover
-        if (!newBoard.move(dir))
-        {
-            continue; // Tenta a próxima direção
-        }
-        
-        if (is_ancestor(current, newBoard.real_board))
-            continue;
-
-        // Se esgotou todas as direções possíveis, faz o backtrack
-        if (frame.move_index >= frame.moves.size())
-        {
-            visited.erase(current->get_board().real_board);
-            cout << "Removendo aaaaaaaaaaaaaaaaa" << endl;
-            State *aux_current = current->get_parent();
-            delete current;
-            current = aux_current;
-            stack.pop();
-            continue;
-        }
-
-        
-        // Cria novo estado
-        State *successor = new State(id++, current->get_cost() + 1, 0, current->get_depth() + 1, current, newBoard);
-        nodes_expanded++;
-        total_branching++;
-
-        // Marca como visitado
-        visited.insert(newBoard.real_board);
-        nodes_visited++;
-
-        current = successor;
-
-        // Continua para esse sucessor
-        stack.push(StackFrame(current));
-    }
-
-    return false;
-}
-
-void BacktrackingSearch(Board initialBoard)
-{
+    size_t id = 0;
     size_t nodes_expanded = 0;
     size_t nodes_visited = 0;
     size_t total_branching = 0;
 
     unordered_set<vector<size_t>, VectorHash> visited;
-    vector<State *> solution_path;
 
-    visited.clear();
-    solution_path.clear();
+    vector<State *> closedList;
+    bool found = false;
 
     auto start_time = chrono::steady_clock::now();
 
-    size_t id = 0;
-    visited.insert(initialBoard.real_board);
-    nodes_visited++;
-
-    State *initialState = new State(id++, 0, 0, 0, nullptr, initialBoard);
-
-    bool found = backtrack_iterative(initialState, id, nodes_expanded, nodes_visited, total_branching, visited, solution_path);
+    // Chamada inicial para a busca recursiva
+    BacktrackingSearch(
+        initialBoard,
+        visited,
+        closedList,
+        nodes_expanded,
+        nodes_visited,
+        total_branching,
+        id,
+        found,
+        nullptr // parent == nullptr
+    );
 
     auto end_time = chrono::steady_clock::now();
     chrono::duration<double> elapsed = end_time - start_time;
@@ -119,14 +44,92 @@ void BacktrackingSearch(Board initialBoard)
     stats.nodes_visited = nodes_visited;
     stats.total_branching = total_branching;
     stats.solution_found = found;
-    stats.solution_path = solution_path;
+    stats.closed_list = closedList;
 
     if (found)
     {
-        stats.solution_cost = solution_path.back()->get_cost();
-        stats.solution_depth = solution_path.back()->get_depth();
-        stats.solution_path = solution_path;
+        State *last_state = closedList.back();
+        stats.solution_cost = last_state->get_cost();
+        stats.solution_depth = last_state->get_depth();
+
+        for (State *s = last_state; s != nullptr; s = s->get_parent())
+            stats.solution_path.push_back(s);
+        reverse(stats.solution_path.begin(), stats.solution_path.end());
     }
 
+    else
+    {
+        stats.solution_cost = 0;
+        stats.solution_depth = 0;
+    }
+
+    stats.avg_branching_factor = (stats.nodes_visited > 0) ? static_cast<double>(stats.nodes_expanded) / stats.nodes_visited : 0.0;
+
     print_statistics(stats);
+}
+
+// Função recursiva
+void BacktrackingSearch(Board board, unordered_set<vector<size_t>, VectorHash> &visited, vector<State *> &closedList, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, size_t &id, bool &found, State *parent)
+{
+    size_t currentDepth = (parent ? parent->get_depth() + 1 : 0);
+
+    const size_t MAX_DEPTH = calculateMaxDepth(board.get_rows(), board.get_cols());
+
+    if (currentDepth > MAX_DEPTH) {
+        return;
+    }
+
+    State *currentState = nullptr;
+
+    // Criação do estado
+    if (parent == nullptr)
+    {
+        currentState = new State(id++, 0, 0, 0, nullptr, board);
+        visited.insert(board.real_board);
+    }
+    else
+    {
+        currentState = new State(id++, parent->get_cost() + 1, 0, parent->get_depth() + 1, parent, board);
+        visited.insert(currentState->get_board().real_board);
+    }
+
+    closedList.push_back(currentState);
+    nodes_expanded++;
+    nodes_visited++;
+
+    // Checa objetivo
+    if (currentState->get_board().end_game())
+    {
+        found = true;
+        return;
+    }
+
+    // Movimentos possíveis
+    for (char direction : {'U', 'D', 'L', 'R'})
+    {
+        Board newBoard = currentState->get_board();
+
+        if (!newBoard.move(direction))
+            continue;
+
+        // Evita ciclos simples
+        if (visited.find(newBoard.real_board) != visited.end())
+            continue;
+
+        // Recursão
+        BacktrackingSearch(newBoard, visited, closedList,
+                           nodes_expanded, nodes_visited,
+                           total_branching, id, found, currentState);
+
+        if (found)
+        {
+            return;
+        }
+
+        // Desfaz a visita
+        visited.erase(newBoard.real_board);
+    }
+
+    delete currentState; // Libera memória
+    cout << "Profundidade maxima atingida: " << MAX_DEPTH << endl;
 }

@@ -9,3 +9,5 @@ struct VectorHash
 };
 
 bool is_ancestor(State *parent, const vector<size_t> &board);
+
+size_t calculateMaxDepth(size_t n, size_t m);

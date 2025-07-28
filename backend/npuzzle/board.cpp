@@ -8,7 +8,7 @@ Board::Board(size_t rows, size_t columns)
 
     real_board.resize(rows_size * columns_size);
     goal_board.resize(rows_size * columns_size);
-
+    
     read_goal_board();
     read_real_board();
 }
