@@ -5,6 +5,7 @@
 #include "../include/backtracking.hpp"
 #include "../include/order.hpp"
 #include "../include/greedy.hpp"
+#include "../include/ida_star.hpp"
 #include "../include/heuristics.hpp"
 
 int main()
@@ -88,8 +89,7 @@ int main()
         cout << "A* Search ainda não implementado.\n";
         break;
     case 8:
-        // IDAStarSearch(initialBoard, heuristic_choice);
-        cout << "IDA* Search ainda não implementado.\n";
+        IDAStarter(initialBoard, heuristic_choice);
         break;
     default:
         cout << "Opção inválida!\n";
