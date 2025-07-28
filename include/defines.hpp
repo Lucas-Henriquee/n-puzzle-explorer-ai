@@ -11,5 +11,6 @@
 #include <functional>    // Para o uso de std::function e outros utilitários funcionais (como hash customizado para unordered_set/map)
 #include <chrono>        // Para medição de tempo, como std::chrono::steady_clock
 #include <cmath>         // Para funções matemáticas como std::sqrt, std::abs,
+#include <fstream>      // Para operações de arquivo (leitura e escrita)
 
 using namespace std;

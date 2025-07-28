@@ -131,5 +131,4 @@ void BacktrackingSearch(Board board, unordered_set<vector<size_t>, VectorHash> &
     }
 
     delete currentState; // Libera memória
-    cout << "Profundidade maxima atingida: " << MAX_DEPTH << endl;
 }

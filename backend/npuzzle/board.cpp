@@ -4,6 +4,8 @@
 Board::Board(size_t rows, size_t columns)
     : columns_size(columns), rows_size(rows)
 {
+    if(columns_size == 0 || rows_size == 0)
+        return;
     srand(static_cast<unsigned int>(time(0)));
 
     real_board.resize(rows_size * columns_size);
@@ -11,6 +13,11 @@ Board::Board(size_t rows, size_t columns)
     
     read_goal_board();
     read_real_board();
+}
+
+Board::Board(size_t rows, size_t columns, vector<size_t> real_board, vector<size_t> goal_board, size_t empty_row, size_t empty_column)
+    : columns_size(columns), rows_size(rows), real_board(real_board), goal_board(goal_board), empty_space_row(empty_row), empty_space_column(empty_column)
+{
 }
 
 Board::~Board()

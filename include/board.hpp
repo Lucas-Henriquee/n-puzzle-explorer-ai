@@ -14,7 +14,9 @@ private:
     void read_real_board(); // Método para ler o tabuleiro real
 
 public:
+    Board(){};
     Board(size_t rows, size_t columns);
+    Board(size_t rows, size_t columns, vector<size_t> real_board, vector<size_t> goal_board, size_t empty_row, size_t empty_column);
     ~Board();
 
     void print_board(const vector<size_t> &flat_board) const; // Método para imprimir o tabuleiro

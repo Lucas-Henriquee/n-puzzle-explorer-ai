@@ -5,35 +5,87 @@
 #include "../include/backtracking.hpp"
 #include "../include/order.hpp"
 #include "../include/greedy.hpp"
+#include "../include/a_star.hpp"
 #include "../include/ida_star.hpp"
 #include "../include/heuristics.hpp"
 
-int main()
+bool loadBoardFromFile(const string &filename, size_t &n, size_t &m, vector<size_t> &initial, vector<size_t> &goal, size_t &empty_column, size_t &empty_row)
 {
-    int n, m;
-    cout << "Digite o número de linhas do tabuleiro: ";
-    cin >> n;
-    cout << "Digite o número de colunas do tabuleiro: ";
-    cin >> m;
+    ifstream file(filename);
+    
+    if (!file.is_open())
+    {
+        cerr << "Erro ao abrir o arquivo: " << filename << endl;
+        return false;
+    }
+    
+    file >> n >> m;
 
-    Board initialBoard(n, m);
+    goal.resize(n * m);
+    for(size_t i = 0; i < n * m; ++i)
+    {
+        file >> goal[i];
+    }
+
+    initial.resize(n * m);
+    for(size_t i = 0; i < n * m; ++i)
+    {
+        file >> initial[i];
+        if(initial[i] == 0)
+        {
+            empty_row = i/n;
+            empty_column = i%m;
+        }
+    }
+
+    file.close();
+    return true;
+}
+
+int main(int argc, char *argv[])
+{
+    size_t n, m, empty_row = 0, empty_column = 0;
+
+    Board initialBoard;
+    
+    if (argc > 1)
+    {
+        vector<size_t> initial;
+        vector<size_t> goal;
+
+        if (!loadBoardFromFile(argv[1], n, m, initial, goal, empty_column, empty_row))
+        {
+            cerr << "Erro ao carregar o tabuleiro do arquivo." << endl;
+            return 1;
+        }
+        initialBoard = Board(n, m, initial, goal, empty_row, empty_column);
+        initialBoard.print_board(initialBoard.real_board);
+    }
+    else
+    {
+        cout << "Digite o número de linhas do tabuleiro: ";
+        cin >> n;
+        cout << "Digite o número de colunas do tabuleiro: ";
+        cin >> m;
+        initialBoard = Board(n, m);
+    }
 
     cout << "Selecione o algoritmo:\n";
     cout << "1 - BFS\n";
     cout << "2 - DFS\n";
     cout << "3 - Backtracking\n";
-    cout << "4 - Order\n";
-    cout << "5 - Interação manual\n";
-    cout << "6 - Greedy Search\n";
-    cout << "7 - A* Search\n";
-    cout << "8 - IDA* Search\n";
+    cout << "4 - Greedy Search\n";
+    cout << "5 - A* Search\n";
+    cout << "6 - IDA* Search\n";
+    cout << "7 - Order\n";
+    cout << "8 - Interação manual\n";
 
-    int choice;
+    size_t choice;
     cin >> choice;
 
-    int heuristic_choice;
+    size_t heuristic_choice;
 
-    if (choice == 6 || choice == 7 || choice == 8)
+    if (choice == 5 || choice == 6 || choice == 7)
     {
         cout << "Selecione a heurística:\n";
         cout << "1 - Manhattan\n";
@@ -73,23 +125,22 @@ int main()
         DepthFirstSearch(initialBoard);
         break;
     case 3:
-        BacktrackingSearch(initialBoard);
+        BacktrackingStarter(initialBoard);
         break;
     case 4:
         OrderSearch(initialBoard);
         break;
     case 5:
-        initialBoard.start_interactive_session();
-        break;
-    case 6:
         GreedySearch(initialBoard, heuristic_choice);
         break;
+    case 6:
+        AStarSearch(initialBoard, heuristic_choice);
+        break;
     case 7:
-        // AStarSearch(initialBoard, heuristic_choice);
-        cout << "A* Search ainda não implementado.\n";
+        IDAStarter(initialBoard, heuristic_choice);
         break;
     case 8:
-        IDAStarter(initialBoard, heuristic_choice);
+        initialBoard.start_interactive_session();
         break;
     default:
         cout << "Opção inválida!\n";
