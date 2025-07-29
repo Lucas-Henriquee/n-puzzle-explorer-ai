@@ -43,6 +43,39 @@ bool loadBoardFromFile(const string &filename, size_t &n, size_t &m, vector<size
     return true;
 }
 
+void callSolvers(Board &initialBoard, const size_t &choice, const size_t &heuristic_choice)
+{
+    switch (choice)
+    {
+    case 1:
+        BacktrackingStarter(initialBoard);
+        break;
+    case 2:
+        OrderSearch(initialBoard);
+        break;
+    case 3:
+        BreadthFirstSearch(initialBoard);
+        break;
+    case 4:
+        DepthFirstSearch(initialBoard);
+        break;
+    case 5:
+        GreedySearch(initialBoard, heuristic_choice);
+        break;
+    case 6:
+        IDAStarter(initialBoard, heuristic_choice);
+        break;
+    case 7:
+        AStarSearch(initialBoard, heuristic_choice);
+        break;
+    case 8:
+        initialBoard.start_interactive_session();
+        break;
+    default:
+        cout << "Opção inválida!\n";
+    }
+}
+
 int runCliApp(int argc, char *argv[])
 {
     size_t n, m, empty_row = 0, empty_column = 0;
@@ -60,7 +93,7 @@ int runCliApp(int argc, char *argv[])
             return 1;
         }
         initialBoard = Board(n, m, initial, goal, empty_row, empty_column);
-        initialBoard.print_board(initialBoard.real_board);
+        // initialBoard.print_board(initialBoard.real_board);
     }
     else
     {
@@ -69,6 +102,12 @@ int runCliApp(int argc, char *argv[])
         cout << "Digite o número de colunas do tabuleiro: ";
         cin >> m;
         initialBoard = Board(n, m);
+    }
+    if(argc == 4){
+        size_t choice = stoi(argv[2]);
+        size_t heuristic_choice = stoi(argv[3]);
+        callSolvers(initialBoard, choice, heuristic_choice);
+        return 0;
     }
 
     cout << "Selecione o algoritmo:\n";
@@ -117,35 +156,7 @@ int runCliApp(int argc, char *argv[])
         }
     }
 
-    switch (choice)
-    {
-    case 1:
-        BacktrackingStarter(initialBoard);
-        break;
-    case 2:
-        OrderSearch(initialBoard);
-        break;
-    case 3:
-        BreadthFirstSearch(initialBoard);
-        break;
-    case 4:
-        DepthFirstSearch(initialBoard);
-        break;
-    case 5:
-        GreedySearch(initialBoard, heuristic_choice);
-        break;
-    case 6:
-        IDAStarter(initialBoard, heuristic_choice);
-        break;
-    case 7:
-        AStarSearch(initialBoard, heuristic_choice);
-        break;
-    case 8:
-        initialBoard.start_interactive_session();
-        break;
-    default:
-        cout << "Opção inválida!\n";
-    }
+    callSolvers(initialBoard, choice, heuristic_choice);
 
     return 0;
 }

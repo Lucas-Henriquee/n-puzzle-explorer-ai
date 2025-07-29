@@ -1,0 +1,23 @@
+#!/bin/bash
+
+mkdir -p output  # Cria diretório para os arquivos de saída (se não existir)
+
+find ./data -type f -name "*.txt" | while read -r arquivo; do
+    if [[ "$arquivo" == "./data/test10x10.txt" ]]; then
+        continue
+    fi
+
+    # Extrai o nome do arquivo base sem extensão e sem caminho
+    nome_base=$(basename "$arquivo" .txt)
+    mkdir -p "output/$nome_base"  # Cria diretório específico para o arquivo
+
+    for i in {1..7}; do
+        if [[ $i -ge 5 ]]; then
+            for j in {1..6}; do
+                ./npuzzle_exec "$arquivo" "$i" "$j" > "output/${nome_base}/c${i}_h${j}.txt" 2>&1
+            done
+        else
+            ./npuzzle_exec "$arquivo" "$i" "0" > "output/${nome_base}/c${i}.txt" 2>&1
+        fi
+    done
+done

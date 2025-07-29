@@ -54,7 +54,7 @@ void IDAStarter(Board board, const int &heuristic_choice)
                 stats.heuristic_name = "Linear Conflict";
                 break;
             case 5:
-                stats.heuristic_name = "Manhattan Inversions";
+                stats.heuristic_name = "Permutation Cycles";
                 break;
             case 6:
                 stats.heuristic_name = "Weighted Sum";

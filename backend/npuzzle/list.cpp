@@ -77,10 +77,11 @@ void List::remove(State *state)
         }
     }
     if(use_cost){
-        if (state == lower)
+        if (state == lower || state == lower_heuristic)
         {
             // Se o estado removido for o de menor custo, precisamos encontrar um novo menor custo
             lower = head; // Começa do início da lista
+            lower_heuristic = head; // Também atualiza o menor heurística
             State *current = head;
 
             while (current != nullptr)
@@ -89,17 +90,6 @@ void List::remove(State *state)
                 {
                     lower = current; // Atualiza o menor custo se encontrar um estado com custo menor
                 }
-                current = current->get_next(); // Avança para o próximo estado
-            }
-        }
-        if (state == lower_heuristic)
-        {
-            // Se o estado removido for o de menor heurística, precisamos encontrar um novo menor heurística
-            lower_heuristic = head; // Começa do início da lista
-            State *current = head;
-
-            while (current != nullptr)
-            {
                 if (current->get_heuristic_value() < lower_heuristic->get_heuristic_value())
                 {
                     lower_heuristic = current; // Atualiza a menor heurística se encontrar um estado com heurística menor

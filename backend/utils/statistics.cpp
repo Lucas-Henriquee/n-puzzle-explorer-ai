@@ -56,7 +56,7 @@ void print_statistics(const SearchStatistics &stats)
         cout << "\nProfundidade da solução: " << stats.solution_depth << endl;
         cout << "Custo da solução: " << stats.solution_cost << endl;
 
-        // print_solution_path(stats.solution_path);
+        print_solution_path(stats.solution_path);
     }
 
     else
