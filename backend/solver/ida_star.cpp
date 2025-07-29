@@ -128,6 +128,7 @@ double IDAStarSearch(Board board, const int &heuristic_choice, double baseline,
         }
         if (heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 > baseline) // Verifica se o custo total do sucessor é maior que o baseline
         {
+            // cout << "Custo total do sucessor maior que o baseline: " << heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 << " > " << baseline << endl;
             if (new_baseline == -1 || heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1 < new_baseline) // Se o novo baseline ainda não foi definido ou é maior que o custo do sucessor
                 new_baseline = heuristic(newBoard, heuristic_choice) + currentState->get_cost() + 1; // Atualiza o novo baseline
             if (new_baseline < lower_new_baseline || lower_new_baseline == -1)

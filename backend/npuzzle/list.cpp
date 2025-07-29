@@ -85,7 +85,7 @@ void List::remove(State *state)
 
             while (current != nullptr)
             {
-                if (current->get_cost() < lower->get_cost())
+                if (current->get_total_cost() < lower->get_total_cost())
                 {
                     lower = current; // Atualiza o menor custo se encontrar um estado com custo menor
                 }
