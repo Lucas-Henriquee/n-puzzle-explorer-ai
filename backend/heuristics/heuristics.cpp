@@ -15,7 +15,7 @@ double heuristic(const Board &board, const int &heuristic_choice)
     case 4:
         return linear_conflict(board);
     case 5:
-        return manhattan_inversions(board);
+        return permutation_cycles(board);
     case 6:
         return weighted_sum(board);
     default:
@@ -199,23 +199,29 @@ double linear_conflict(const Board &board)
     return manhattan(board) + 2 * linear_conflict;
 }
 
-double manhattan_inversions(const Board &board)
-{
-    double manhattan_distance = manhattan(board);
-    size_t inversions = 0;
-    for (size_t i = 0; i < board.real_board.size(); ++i)
-    {
-        if (board.real_board[i] == 0) continue; // Ignora o espaço vazio
-        for (size_t j = i + 1; j < board.real_board.size(); ++j)
-        {
-            if (board.real_board[j] == 0) continue; // Ignora o espaço vazio
-            if (board.real_board[i] > board.real_board[j])
-            {
-                ++inversions;
-            }
-        }
+double permutation_cycles(const Board &board) {
+    std::unordered_map<int, int> goal_position;
+    for (size_t i = 0; i < board.goal_board.size(); ++i) {
+        if (board.goal_board[i] != 0)  // Ignora o espaço vazio
+            goal_position[board.goal_board[i]] = i;
     }
-    return static_cast<double>(manhattan_distance + inversions);
+
+    std::vector<bool> visited(board.real_board.size(), false);
+    double cycles = 0;
+
+    for (size_t i = 0; i < board.real_board.size(); ++i) {
+        if (visited[i] || board.real_board[i] == 0 || board.real_board[i] == board.goal_board[i])
+            continue;
+
+        size_t j = i;
+        while (!visited[j] && board.real_board[j] != 0) {
+            visited[j] = true;
+            j = goal_position[board.real_board[j]];
+        }
+        ++cycles;
+    }
+
+    return 0.8 * cycles + 0.2 * manhattan(board);
 }
 
 double weighted_sum(const Board &board)

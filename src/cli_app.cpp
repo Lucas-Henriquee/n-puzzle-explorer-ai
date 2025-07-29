@@ -93,7 +93,7 @@ int runCliApp(int argc, char *argv[])
         cout << "2 - Euclidean\n";
         cout << "3 - Misplaced Tiles\n";
         cout << "4 - Linear Conflict\n";
-        cout << "5 - Manhattan + Relative Inversions\n";
+        cout << "5 - Permutation Cycles\n";
         cout << "6 - Weighted Sum\n";
         cin >> heuristic_choice;
 
