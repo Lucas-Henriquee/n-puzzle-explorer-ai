@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N-Puzzle</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div id="app-container">
+    <!-- Tela Inicial -->
+    <div id="screen-home" class="screen active">
+      <h1 class="title">N-Puzzle Solver</h1>
+      <div class="menu">
+        <button onclick="showScreen('screen-play')">Jogar</button>
+        <button onclick="showScreen('screen-solver')">Testar Algoritmos</button>
+        <button onclick="window.close()">Sair</button>
+      </div>
+    </div>
+
+    <!-- Tela de Jogo -->
+    <div id="screen-play" class="screen">
+      <h2>Modo de Jogo</h2>
+      <div id="game-board" class="board"></div>
+      <div class="menu">
+        <button onclick="showScreen('screen-home')">Voltar</button>
+      </div>
+    </div>
+
+    <!-- Tela de Solver -->
+    <div id="screen-solver" class="screen">
+    <h2>Testar Algoritmos</h2>
+    <div id="solver-board" class="board"></div>
+    <div id="solver-info"></div> 
+    <div id="stats"></div>
+    <div class="menu">
+        <button onclick="solvePuzzle()">Resolver</button>
+        <button onclick="showScreen('screen-home')">Voltar</button>
+    </div>
+    </div>
+
+
+  <script src="js/ui.js"></script>
+  <script src="js/animation.js"></script>
+  <script src="js/fetcher.js"></script>
+</body>
+
+</html>

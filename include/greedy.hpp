@@ -2,5 +2,6 @@
 
 #include "../include/defines.hpp"
 #include "../include/board.hpp"
+#include "../include/statistics.hpp"
 
-void GreedySearch(Board board, const int &heuristic_choice);
+SearchStatistics GreedySearch(Board board, const int &heuristic_choice);

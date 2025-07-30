@@ -2,5 +2,6 @@
 
 #include "../include/defines.hpp"
 #include "../include/board.hpp"
+#include "../include/statistics.hpp"
 
-void DepthFirstSearch(Board initialBoard);
+SearchStatistics DepthFirstSearch(Board initialBoard);

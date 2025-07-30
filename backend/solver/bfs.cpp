@@ -7,7 +7,7 @@
 #include "../include/statistics.hpp"
 
 // Implementação da Busca em Largura (BFS)
-void BreadthFirstSearch(Board board)
+SearchStatistics BreadthFirstSearch(Board board)
 {
     size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
@@ -104,45 +104,5 @@ void BreadthFirstSearch(Board board)
     }
 
     print_statistics(stats);
+    return stats;
 }
-
-// State *successor = new State(id, currentState->get_cost() + 1, currentState->get_depth() + 1, currentState, newBoard);
-// id++; // Incrementa o ID para o próximo sucessor
-// // Verifica se o sucessor já está na lista fechada
-// bool alreadyInClosedList = false;
-// State *closedState = closedList.get_head();
-// while (closedState != nullptr)
-// {
-//     if (closedState->get_board().real_board == successor->get_board().real_board)
-//     {                               // TODO: Atualizar essa igualdade para reduzir custo computacional
-//         alreadyInClosedList = true; // O sucessor já está na lista fechada
-//         break;
-//     }
-//     closedState = closedState->get_next(); // Avança para o próximo estado na lista
-// }
-// if (alreadyInClosedList)
-// {
-//     delete successor; // Libera a memória do sucessor se já estiver na lista fechada
-//     continue;         // Pula para o próximo sucessor
-// }
-// // Verifica se o sucessor já está na lista aberta
-// bool alreadyInOpenList = false;
-// State *openState = openList.get_head();
-// while (openState != nullptr)
-// {
-//     if (openState->get_board().real_board == successor->get_board().real_board)
-//     {                             // TODO: Atualizar essa igualdade para reduzir custo computacional
-//         alreadyInOpenList = true; // O sucessor já está na lista aberta
-//         break;
-//     }
-// }
-// if (alreadyInOpenList)
-// {
-//     delete successor; // Libera a memória do sucessor se já estiver na lista aberta
-//     continue;         // Pula para o próximo sucessor
-// }
-// openList.add(successor); // Adiciona o sucessor à lista aberta
-//             }
-//         }
-//     }
-// }

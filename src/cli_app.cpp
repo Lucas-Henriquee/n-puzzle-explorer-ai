@@ -9,6 +9,7 @@
 #include "../include/a_star.hpp"
 #include "../include/ida_star.hpp"
 #include "../include/heuristics.hpp"
+#include "../include/statistics.hpp"
 
 bool loadBoardFromFile(const string &filename, size_t &n, size_t &m, vector<size_t> &initial, vector<size_t> &goal, size_t &empty_column, size_t &empty_row)
 {
@@ -45,28 +46,30 @@ bool loadBoardFromFile(const string &filename, size_t &n, size_t &m, vector<size
 
 void callSolvers(Board &initialBoard, const size_t &choice, const size_t &heuristic_choice)
 {
+    SearchStatistics stats;
+
     switch (choice)
     {
     case 1:
-        BacktrackingStarter(initialBoard);
+        stats = BacktrackingStarter(initialBoard);
         break;
     case 2:
-        OrderSearch(initialBoard);
+        stats = OrderSearch(initialBoard);
         break;
     case 3:
-        BreadthFirstSearch(initialBoard);
+        stats = BreadthFirstSearch(initialBoard);
         break;
     case 4:
-        DepthFirstSearch(initialBoard);
+        stats = DepthFirstSearch(initialBoard);
         break;
     case 5:
-        GreedySearch(initialBoard, heuristic_choice);
+        stats = GreedySearch(initialBoard, heuristic_choice);
         break;
     case 6:
-        IDAStarter(initialBoard, heuristic_choice);
+        stats = IDAStarter(initialBoard, heuristic_choice);
         break;
     case 7:
-        AStarSearch(initialBoard, heuristic_choice);
+        stats = AStarSearch(initialBoard, heuristic_choice);
         break;
     case 8:
         initialBoard.start_interactive_session();
@@ -124,7 +127,7 @@ int runCliApp(int argc, char *argv[])
     cin >> choice;
 
     size_t heuristic_choice = 0;
-
+    
     if (choice == 5 || choice == 6 || choice == 7)
     {
         cout << "Selecione a heurística:\n";

@@ -6,7 +6,7 @@
 #include "../include/statistics.hpp"
 
 // Função principal do Backtracking
-void BacktrackingStarter(Board initialBoard)
+SearchStatistics BacktrackingStarter(Board initialBoard)
 {
     size_t id = 0;
     size_t nodes_expanded = 0;
@@ -66,6 +66,7 @@ void BacktrackingStarter(Board initialBoard)
     stats.avg_branching_factor = (stats.nodes_visited > 0) ? static_cast<double>(stats.nodes_expanded) / stats.nodes_visited : 0.0;
 
     print_statistics(stats);
+    return stats;
 }
 
 // Função recursiva

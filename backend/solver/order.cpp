@@ -7,7 +7,7 @@
 #include "../include/statistics.hpp"
 
 // Implementação da Busca Ordenada (OS)
-void OrderSearch(Board board)
+SearchStatistics OrderSearch(Board board)
 {
     size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
@@ -104,4 +104,5 @@ void OrderSearch(Board board)
     }
 
     print_statistics(stats);
+    return stats;
 }

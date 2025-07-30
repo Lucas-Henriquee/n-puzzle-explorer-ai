@@ -7,7 +7,7 @@
 #include "../include/statistics.hpp"
 #include "../include/board_utils.hpp"
 
-void GreedySearch(Board board, const int &heuristic_choice)
+SearchStatistics GreedySearch(Board board, const int &heuristic_choice)
 {
     size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
@@ -130,4 +130,5 @@ void GreedySearch(Board board, const int &heuristic_choice)
     }
 
     print_statistics(stats);
+    return stats;
 }

@@ -7,7 +7,7 @@
 #include "../include/statistics.hpp"
 #include "../include/board_utils.hpp"
 
-void IDAStarter(Board board, const int &heuristic_choice)
+SearchStatistics IDAStarter(Board board, const int &heuristic_choice)
 {
     size_t id = 0;              // Inicializa o ID do estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
@@ -79,7 +79,7 @@ void IDAStarter(Board board, const int &heuristic_choice)
             }
             stats.avg_branching_factor = static_cast<double>(stats.nodes_expanded) / stats.nodes_visited;
             print_statistics(stats); // Imprime as estatísticas da busca
-            return;
+            return stats; 
         }
         baseline = new_baseline; // Atualiza o baseline para o próximo ciclo
         visited.clear(); // Limpa o conjunto de visitados

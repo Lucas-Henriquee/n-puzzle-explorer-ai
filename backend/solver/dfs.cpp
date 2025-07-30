@@ -7,7 +7,7 @@
 #include "../include/statistics.hpp"
 
 // Implementação da Busca em Profundidade (DFS)
-void DepthFirstSearch(Board initialBoard)
+SearchStatistics DepthFirstSearch(Board initialBoard)
 {
     size_t id = 0;              // Identificador único para cada estado
     size_t nodes_expanded = 0;  // Contador de nós expandidos
@@ -107,4 +107,5 @@ void DepthFirstSearch(Board initialBoard)
     }
 
     print_statistics(stats);
+    return stats;
 }

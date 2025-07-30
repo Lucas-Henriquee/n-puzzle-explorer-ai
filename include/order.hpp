@@ -2,5 +2,6 @@
 
 #include "../include/defines.hpp"
 #include "../include/board.hpp"
+#include "../include/statistics.hpp"
 
-void OrderSearch(Board board);
+SearchStatistics OrderSearch(Board board);

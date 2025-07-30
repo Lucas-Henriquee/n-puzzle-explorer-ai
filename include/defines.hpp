@@ -12,5 +12,6 @@
 #include <chrono>        // Para medição de tempo, como std::chrono::steady_clock
 #include <cmath>         // Para funções matemáticas como std::sqrt, std::abs,
 #include <fstream>      // Para operações de arquivo (leitura e escrita)
+#include <string>      // Para o uso de std::string
 
 using namespace std;
