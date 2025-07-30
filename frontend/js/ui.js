@@ -27,9 +27,9 @@ function generateBoard(boardId) {
   container.innerHTML = "";
 
   const board = [
-    [8, 7, 3],
-    [5, 1, 6],
-    [2, 4, 0]
+    [6, 2, 4],
+    [5, 8, 3],
+    [1, 7, 0]
   ];
   currentBoard = board;
 
@@ -59,8 +59,8 @@ async function solvePuzzle() {
   const stats = document.getElementById("stats");
   stats.innerHTML = "Executando algoritmo...";
 
-  const algorithm = "order"; 
-  const heuristic = "manhattan";
+  const algorithm = "BFS"; 
+  const heuristic = " ";
 
   const config = {
     initial: currentBoard,

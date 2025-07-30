@@ -45,7 +45,7 @@ void define_routes(crow::SimpleApp &app)
         SearchStatistics stats;
         auto start = chrono::high_resolution_clock::now();
 
-        stats = OrderSearch(board);
+        stats = BreadthFirstSearch(board);
 
         auto end = chrono::high_resolution_clock::now();
         stats.elapsed_time = chrono::duration<double>(end - start).count();

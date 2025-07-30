@@ -65,7 +65,6 @@ SearchStatistics BacktrackingStarter(Board initialBoard)
 
     stats.avg_branching_factor = (stats.nodes_visited > 0) ? static_cast<double>(stats.nodes_expanded) / stats.nodes_visited : 0.0;
 
-    print_statistics(stats);
     return stats;
 }
 
