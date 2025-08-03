@@ -103,6 +103,5 @@ SearchStatistics OrderSearch(Board board)
         stats.solution_path = solution_path;
     }
 
-    print_statistics(stats);
     return stats;
 }

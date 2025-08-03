@@ -78,7 +78,6 @@ SearchStatistics IDAStarter(Board board, const int &heuristic_choice)
                 stats.solution_depth = 0;
             }
             stats.avg_branching_factor = static_cast<double>(stats.nodes_expanded) / stats.nodes_visited;
-            print_statistics(stats); // Imprime as estatísticas da busca
             return stats; 
         }
         baseline = new_baseline; // Atualiza o baseline para o próximo ciclo

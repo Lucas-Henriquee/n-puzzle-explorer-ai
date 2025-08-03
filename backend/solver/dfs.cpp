@@ -110,6 +110,5 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
         stats.solution_path = solution_path;
     }
 
-    print_statistics(stats);
     return stats;
 }

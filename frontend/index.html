@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>N-Puzzle</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-
 <body>
+  
   <div id="app-container">
-    <!-- Tela Inicial -->
-    <div id="screen-home" class="screen active">
-      <h1 class="title">N-Puzzle Solver</h1>
+    
+    <div id="screen-welcome" class="screen active">
+      <h1 class="title">N-Puzzle</h1>
+      <div id="intro-board" class="board"></div>
       <div class="menu">
-        <button onclick="showScreen('screen-play')">Jogar</button>
-        <button onclick="showScreen('screen-solver')">Testar Algoritmos</button>
-        <button onclick="window.close()">Sair</button>
+        <button onclick="showScreen('screen-home')">Iniciar</button>
       </div>
     </div>
 
-    <!-- Tela de Jogo -->
+    <div id="screen-home" class="screen">
+      <h1 class="title">Menu Principal</h1>
+      <div class="menu">
+        <button onclick="showScreen('screen-play')">Modo Iterativo</button>
+        <button onclick="showScreen('screen-size-select')">Testar Algoritmos de Busca</button>
+        <button onclick="showScreen('screen-help')">Como Funciona</button>
+        <button onclick="showScreen('screen-credits')">Créditos</button>
+        <button onclick="showScreen('screen-welcome')">Sair</button>
+      </div>
+    </div>
+
     <div id="screen-play" class="screen">
       <h2>Modo de Jogo</h2>
       <div id="game-board" class="board"></div>
@@ -29,22 +37,154 @@
       </div>
     </div>
 
-    <!-- Tela de Solver -->
-    <div id="screen-solver" class="screen">
-    <h2>Testar Algoritmos</h2>
-    <div id="solver-board" class="board"></div>
-    <div id="solver-info"></div> 
-    <div id="stats"></div>
-    <div class="menu">
-        <button onclick="solvePuzzle()">Resolver</button>
+    <div id="screen-size-select" class="screen">
+      <h2>Escolha o Tamanho do Tabuleiro</h2>
+      <div id="board-size-selector" class="modern-selector">
+        <div class="size-tile" data-size="2">2x2</div>
+        <div class="size-tile" data-size="3">3x3</div>
+        <div class="size-tile" data-size="4">4x4</div>
+        <div class="size-tile" data-size="5">5x5</div>
+      </div>
+      <div class="menu">
+        <button id="confirm-size" disabled>Confirmar</button>
         <button onclick="showScreen('screen-home')">Voltar</button>
-    </div>
+      </div>
     </div>
 
+    <div id="screen-goal-choice" class="screen">
+      <h2>Escolha uma forma de inserir o Estado Objetivo</h2>
+      <div id="goal-selector" class="modern-selector">
+        <div class="goal-option" data-goal="sequence">Manual</div>
+        <div class="goal-option" data-goal="random">Padrão</div>
+      </div>
+      <div class="menu">
+        <button id="confirm-goal" disabled>Confirmar</button>
+        <button onclick="showScreen('screen-size-select')">Voltar</button>
+      </div>
+    </div>
 
-  <script src="js/ui.js"></script>
+    <div id="screen-goal-input" class="screen">
+      <h2>Insira o Tabuleiro Objetivo</h2>
+      <div id="goal-board-input" class="board editable-board"></div>
+      <div class="menu">
+        <button id="confirm-goal-board-btn" disabled onclick="confirmGoalBoard()">Confirmar</button>
+        <button onclick="showScreen('screen-goal-choice')">Voltar</button>
+      </div>
+    </div>
+    
+    <div id="screen-initial-choice" class="screen">
+      <h2>Escolha uma forma de inserir o Estado Inicial</h2>
+      <h3>Estado Objetivo Selecionado:</h3>
+      <div id="goal-board-preview" class="board"></div>
+      <div id="initial-selector" class="modern-selector">
+        <div class="goal-option" data-goal="manual">Manual</div>
+        <div class="goal-option" data-goal="random">Aleatório</div>
+      </div>
+      <div class="menu">
+        <button id="confirm-initial-choice" disabled>Confirmar</button>
+        <button onclick="showScreen('screen-goal-choice')">Voltar</button>
+      </div>
+    </div>
+
+    <div id="screen-initial-input" class="screen">
+      <h2>Insira o Tabuleiro Inicial</h2>
+      <div id="initial-board-input" class="board"></div>
+      <div class="menu">
+        <button id="confirm-initial-board-btn" disabled onclick="confirmInitialBoard()">Confirmar</button>
+        <button onclick="showScreen('screen-initial-choice')">Voltar</button>
+      </div>
+    </div>
+        
+    <div id="screen-random-preview" class="screen">
+      <h2>Tabuleiro Gerado</h2>
+      <div id="random-board-preview" class="board"></div>
+      <div class="menu">
+        <button onclick="showScreen('screen-test-algorithms')">Próximo</button>
+        <button onclick="regenerateRandomBoard()">Gerar Outro</button>
+        <button onclick="showScreen('screen-initial-choice')">Voltar</button>
+      </div>
+    </div>
+
+    <div id="screen-test-algorithms" class="screen">
+      <div id="algorithms-panel" class="side-panel left-panel">
+        <div id="algo-selection-content" class="panel-content active">
+          <h3>Algoritmos de Busca</h3>
+         <div id="algo-selector-panel" class="modern-selector-vertical">
+          <div class="goal-option" data-algo="Backtracking">Backtracking</div>
+          <div class="goal-option" data-algo="BFS">BFS</div>
+          <div class="goal-option" data-algo="DFS">DFS</div>
+          <div class="goal-option" data-algo="Order">Order</div>
+          <div class="goal-option" data-algo="Greedy">Greedy</div>
+          <div class="goal-option" data-algo="A*">A*</div>
+          <div class="goal-option" data-algo="IDA*">IDA*</div>
+        </div>
+          <div class="menu-panel">
+            <button id="run-algorithm-btn" disabled>Rodar Algoritmo</button>
+            <button onclick="showScreen('screen-size-select')">Mudar Tabuleiro</button>
+            <button onclick="showScreen('screen-home')">Voltar</button>
+          </div>
+        </div>
+        <div id="heuristic-selection-content" class="panel-content">
+          <h3>Escolha a Heurística</h3>
+          <div id="heuristic-selector-panel" class="modern-selector-vertical">
+              <div class="goal-option" data-heuristic="manhattan">Manhattan Distance</div>
+              <div class="goal-option" data-heuristic="euclidean">Euclidean Distance</div>
+              <div class="goal-option" data-heuristic="misplaced">Misplaced Tiles</div>
+              <div class="goal-option" data-heuristic="linear">Linear Conflict</div>
+              <div class="goal-option" data-heuristic="permutation">Permutation Cycles</div>
+              <div class="goal-option" data-heuristic="weighted">Weighted Sum</div>
+          </div>
+          <div class="menu-panel">
+            <button id="run-heuristic-btn" disabled>Rodar Algoritmo</button>
+            <button id="back-to-algos-btn">Voltar para Algoritmos</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="main-content">
+        <h2>Tabuleiro de Testes</h2>
+        <div id="test-board" class="board"></div>
+      </div>
+
+      <div id="stats-panel" class="side-panel right-panel">
+        <h3>Estatísticas da Execução</h3>
+        <div class="info-box" id="solver-info">Selecione um algoritmo para começar.</div>
+        <div class="info-box" id="stats"></div>
+        <div id="animation-controls" class="menu-panel" style="display: none;">
+          <button id="accel-animation-btn">Acelerar</button>
+          <button id="reset-animation-btn">Reiniciar</button>
+          <button id="end-animation-btn">Terminar</button>
+          <button id="show-tree-btn" onclick="showSearchTree()">Ver Árvore de Busca</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-help" class="screen">
+      <h2>Como Funciona</h2>
+      <p>Este projeto permite explorar diferentes algoritmos de busca aplicados ao problema N-Puzzle.</p>
+      <div class="menu">
+        <button onclick="showScreen('screen-home')">Voltar</button>
+      </div>
+    </div>
+
+    <div id="screen-credits" class="screen">
+      <h2>Créditos</h2>
+      <p>
+        Projeto desenvolvido por <strong>Breno Montanha Costa</strong> e <strong>Lucas Henrique Nogueira</strong>,
+        como parte do trabalho prático da disciplina <em>DCC014 – Inteligência Artificial</em>.
+      </p>
+      <p>
+        <strong>Backend:</strong> C++ com o framework Crow<br>
+        <strong>Frontend:</strong> HTML, CSS, JavaScript
+      </p>
+      <div class="menu">
+        <button onclick="showScreen('screen-home')">Voltar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/animation.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/fetcher.js"></script>
 </body>
-
 </html>

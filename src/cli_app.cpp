@@ -80,6 +80,8 @@ void callSolvers(Board &initialBoard, const size_t &choice, const size_t &heuris
     default:
         cout << "Opção inválida!\n";
     }
+
+    print_statistics(stats);
 }
 
 int runCliApp(int argc, char *argv[])

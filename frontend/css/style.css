@@ -1,4 +1,7 @@
-/* Reset básico */
+/* ====================================================== */
+/* ========== 1. RESET & BASE                          = */
+/* ====================================================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -7,43 +10,94 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #2c3e50, #34495e);
-  color: #ecf0f1;
+  background: linear-gradient(135deg, #11131b, #1a1f2d);
+  color: #e6ebf1;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  position: relative;
 }
 
 #app-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
+
+
+/* ====================================================== */
+/* ========== 2. LAYOUT GERAL & TELAS                  = */
+/* ====================================================== */
 
 .screen {
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #1c1c1e;
+  background-color: #1c1f2a;
   border-radius: 24px;
   padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  width: 90%;
-  max-width: 600px;
-  height: 80%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  width: 650px;
+  height: 600px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 650px;
+  max-height: 600px;
+  transform: translate(-50%, -50%) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .screen.active {
   display: flex;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
 }
+
+#screen-test-algorithms {
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 0;
+  background: linear-gradient(135deg, #11131b, #1a1f2d);
+  box-shadow: none;
+  border-radius: 0;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+#screen-test-algorithms.active {
+    display: flex;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+.main-content h2 {
+    margin-bottom: 20px;
+}
+
+/* ====================================================== */
+/* ========== 3. COMPONENTES DE INTERFACE              = */
+/* ====================================================== */
 
 .title {
   font-size: 3rem;
   margin-bottom: 40px;
+  color: #ffffff;
 }
 
 .menu {
@@ -54,38 +108,338 @@ body {
   margin-top: 40px;
 }
 
-.menu button {
+.menu-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.menu button, .menu-panel button {
   padding: 16px;
   font-size: 1.2rem;
-  background-color: #3498db;
-  color: white;
+  background-color: #256d85;
+  color: #ffffff;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: background 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-.menu button:hover {
-  background-color: #2980b9;
+.menu button:hover, .menu-panel button:hover {
+  background-color: #1e5d74;
 }
+
+.menu button:disabled, .menu-panel button:disabled {
+  background-color: #4a4a4a;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.modern-selector {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.modern-selector-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.modern-selector-vertical h4 {
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+.size-tile {
+  width: 90px;
+  height: 90px;
+  background: #2f354b;
+  color: #e6ebf1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.size-tile:hover {
+  background: #3e465c;
+  transform: scale(1.05);
+}
+
+.size-tile.selected {
+  background: #256d85;
+  color: white;
+  box-shadow: 0 0 12px #256d85;
+}
+
+.goal-option {
+  width: 200px;
+  padding: 20px;
+  background: #2f354b;
+  color: #e6ebf1;
+  text-align: center;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modern-selector-vertical .goal-option {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+
+.goal-option:hover {
+  background: #3e465c;
+  transform: scale(1.05);
+}
+
+.goal-option.selected {
+  background: #256d85;
+  color: white;
+  box-shadow: 0 0 12px #256d85;
+}
+
+#algo-selector-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+#algo-selector-panel .goal-option {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+#algo-selector-panel .goal-option[data-algo="Backtracking"] {
+    grid-column: 1 / span 2;
+}
+
+#heuristic-selector-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#heuristic-selector-panel .goal-option {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+}
+
+
+/* ====================================================== */
+/* ========== 4. TABULEIROS                            = */
+/* ====================================================== */
 
 .board {
   position: relative;
   width: 270px;
   height: 270px;
   margin: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.board[data-size='4'] {
+    width: 360px;
+    height: 360px;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.board[data-size='5'] {
+    width: 450px;
+    height: 450px;
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .tile {
-  position: absolute;
-  width: 80px;
-  height: 80px;
   font-size: 1.5rem;
-  background-color: #ecf0f1;
-  color: #2c3e50;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.board.editable-board,
+#goal-board-preview,
+#random-board-preview {
+  display: grid;
+  gap: 6px;
+  position: relative;
+}
+
+.board.editable-board .tile {
+  position: relative;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  background-color: #2f354b; 
+  color: #e6ebf1; 
+}
+
+
+.board.editable-board .tile.filled-tile {
+  background-color: #e6ebf1; 
+  color: #1a1d2b; 
+  cursor: default; 
+}
+
+
+#goal-board-preview .tile,
+#random-board-preview .tile {
+  background-color: #e6ebf1;
+  color: #1a1d2b;
+  position: relative; 
+  width: auto;
+  height: auto;
+  cursor: default; 
+}
+
+#test-board,
+#intro-board {
+  position: relative;
+  width: 270px;
+  height: 270px;
+  margin: 20px auto;
+  display: block; 
+}
+#test-board .tile,
+#intro-board .tile {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background-color: #e6ebf1;
+  color: #1a1d2b;
   transition: transform 0.3s ease;
+}
+
+.board[data-size='4'] #test-board .tile {
+  width: 87px;
+  height: 87px;
+  font-size: 1.2rem;
+}
+.board[data-size='5'] #test-board .tile {
+    width: 87px;
+    height: 87px;
+    font-size: 1.2rem;
+}
+
+.no-solution-tile {
+  background-color: #4a4a4a !important;
+  color: #e6ebf1 !important;
+  font-size: 2rem !important;
+  font-weight: bold !important;
+  position: relative !important;
+  transform: none !important;
+  width: auto !important; 
+  height: auto !important; 
+}
+
+/* ====================================================== */
+/* ========== 5. PAINÉIS LATERAIS                      = */
+/* ====================================================== */
+
+.side-panel {
+  width: 300px;
+  padding: 30px;
+  background-color: #1c1f2a;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  color: #e6ebf1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+  overflow-y: auto;
+}
+.left-panel {
+    border-radius: 0 20px 20px 0;
+}
+.right-panel {
+    border-radius: 20px 0 0 20px;
+}
+.panel-content {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+}
+.panel-content.active {
+    display: flex;
+}
+
+.side-panel h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.info-box {
+  background-color: #2f354b;
+  padding: 16px;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 1rem;
+  box-shadow: inset 0 0 8px rgba(255,255,255,0.05);
+}
+
+/* ====================================================== */
+/* ========== 6. OUTROS ESTILOS & RESPONSIVIDADE       = */
+/* ====================================================== */
+
+.screen p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-align: justify;
+  margin-bottom: 1em;
+  color: #e6ebf1;
+}
+
+.screen code {
+  background-color: #2f354b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #e6ebf1;
+}
+
+@media (max-width: 1200px) {
+  #screen-test-algorithms {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+  }
+  
+  .side-panel {
+    width: 90%;
+    margin: 20px 0;
+    border-radius: 20px;
+    min-height: 300px;
+    order: 1;
+  }
+  .main-content {
+      order: 2;
+  }
+  .left-panel, .right-panel {
+      border-radius: 20px;
+  }
+  #stats-panel {
+    min-height: 200px;
+    order: 3;
+  }
 }

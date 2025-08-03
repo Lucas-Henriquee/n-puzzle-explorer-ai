@@ -129,6 +129,5 @@ SearchStatistics AStarSearch(Board board, const int &heuristic_choice)
         stats.solution_path = solution_path;
     }
 
-    print_statistics(stats);
     return stats;
 }
