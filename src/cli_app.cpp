@@ -50,6 +50,9 @@ void callSolvers(Board &initialBoard, const size_t &choice, const size_t &heuris
 
     switch (choice)
     {
+    case 0:
+        cout << "Saindo do programa.\n";
+        return;
     case 1:
         stats = BacktrackingStarter(initialBoard);
         break;
@@ -112,54 +115,56 @@ int runCliApp(int argc, char *argv[])
         callSolvers(initialBoard, choice, heuristic_choice);
         return 0;
     }
-
-    cout << "Selecione o algoritmo:\n";
-    cout << "1 - Backtracking\n";
-    cout << "2 - Order\n";
-    cout << "3 - BFS\n";
-    cout << "4 - DFS\n";
-    cout << "5 - Greedy Search\n";
-    cout << "6 - IDA* Search\n";
-    cout << "7 - A* Search\n";
-    cout << "8 - Interação manual\n";
-
     size_t choice;
-    cin >> choice;
+    do{
+        cout << "Selecione o algoritmo:\n";
+        cout << "1 - Backtracking\n";
+        cout << "2 - Order\n";
+        cout << "3 - BFS\n";
+        cout << "4 - DFS\n";
+        cout << "5 - Greedy Search\n";
+        cout << "6 - IDA* Search\n";
+        cout << "7 - A* Search\n";
+        cout << "8 - Interação manual\n";
+        cout << "0 - Sair\n";
 
-    size_t heuristic_choice = 0;
-    
-    if (choice == 5 || choice == 6 || choice == 7)
-    {
-        cout << "Selecione a heurística:\n";
-        cout << "1 - Manhattan\n";
-        cout << "2 - Euclidean\n";
-        cout << "3 - Misplaced Tiles\n";
-        cout << "4 - Linear Conflict\n";
-        cout << "5 - Permutation Cycles\n";
-        cout << "6 - Weighted Sum\n";
-        cin >> heuristic_choice;
+        cin >> choice;
 
-        switch (heuristic_choice)
+        size_t heuristic_choice = 0;
+        
+        if (choice == 5 || choice == 6 || choice == 7)
         {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        default:
-            cout << "Heurística inválida!\n";
-            return 1;
-        }
-    }
+            cout << "Selecione a heurística:\n";
+            cout << "1 - Manhattan\n";
+            cout << "2 - Euclidean\n";
+            cout << "3 - Misplaced Tiles\n";
+            cout << "4 - Linear Conflict\n";
+            cout << "5 - Permutation Cycles\n";
+            cout << "6 - Weighted Sum\n";
+            cin >> heuristic_choice;
 
-    callSolvers(initialBoard, choice, heuristic_choice);
+            switch (heuristic_choice)
+            {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            default:
+                cout << "Heurística inválida!\n";
+                return 1;
+            }
+        }
+
+        callSolvers(initialBoard, choice, heuristic_choice);
+    }while (choice != 0);
 
     return 0;
 }

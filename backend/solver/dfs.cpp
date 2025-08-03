@@ -18,7 +18,9 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
     unordered_set<vector<size_t>, VectorHash> closedSet; // Conjunto para armazenar estados fechados
     vector<State *> closedList;                          // Lista para armazenar estados fechados
 
-    List openList(false); // Lista para armazenar estados abertos
+    List openList(false, false); // Lista para armazenar estados abertos
+
+    const size_t MAX_DEPTH = calculateMaxDepth(initialBoard.get_rows(), initialBoard.get_cols());
 
     auto start_time = chrono::steady_clock::now(); // Marca o tempo de início da busca
 
@@ -36,6 +38,8 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
     {
         State *currentState = openList.get_tail();
         openList.remove(currentState);
+        if(currentState->get_depth() > MAX_DEPTH)
+            continue; // Se a profundidade do estado atual exceder o máximo, pula para a próxima iteração
 
         // Adiciona o estado atual ao conjunto de estados fechados
         closedSet.insert(currentState->get_board().real_board);

@@ -18,6 +18,8 @@ SearchStatistics BacktrackingStarter(Board initialBoard)
     vector<State *> closedList;
     bool found = false;
 
+    const size_t MAX_DEPTH = calculateMaxDepth(initialBoard.get_rows(), initialBoard.get_cols());
+
     auto start_time = chrono::steady_clock::now();
 
     // Chamada inicial para a busca recursiva
@@ -30,7 +32,8 @@ SearchStatistics BacktrackingStarter(Board initialBoard)
         total_branching,
         id,
         found,
-        nullptr // parent == nullptr
+        nullptr, // parent == nullptr
+        MAX_DEPTH
     );
 
     auto end_time = chrono::steady_clock::now();
@@ -70,11 +73,9 @@ SearchStatistics BacktrackingStarter(Board initialBoard)
 }
 
 // Função recursiva
-void BacktrackingSearch(Board board, unordered_set<vector<size_t>, VectorHash> &visited, vector<State *> &closedList, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, size_t &id, bool &found, State *parent)
+void BacktrackingSearch(Board board, unordered_set<vector<size_t>, VectorHash> &visited, vector<State *> &closedList, size_t &nodes_expanded, size_t &nodes_visited, size_t &total_branching, size_t &id, bool &found, State *parent, const size_t MAX_DEPTH)
 {
     size_t currentDepth = (parent ? parent->get_depth() + 1 : 0);
-
-    const size_t MAX_DEPTH = calculateMaxDepth(board.get_rows(), board.get_cols());
 
     if (currentDepth > MAX_DEPTH) {
         return;
@@ -120,7 +121,7 @@ void BacktrackingSearch(Board board, unordered_set<vector<size_t>, VectorHash> &
         // Recursão
         BacktrackingSearch(newBoard, visited, closedList,
                            nodes_expanded, nodes_visited,
-                           total_branching, id, found, currentState);
+                           total_branching, id, found, currentState, MAX_DEPTH);
 
         if (found)
         {
