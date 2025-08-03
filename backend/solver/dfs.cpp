@@ -18,7 +18,7 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
     unordered_set<vector<size_t>, VectorHash> closedSet; // Conjunto para armazenar estados fechados
     vector<State *> closedList;                          // Lista para armazenar estados fechados
 
-    List openList(false, false); // Lista para armazenar estados abertos
+    List openList(false); // Lista para armazenar estados abertos
 
     const size_t MAX_DEPTH = calculateMaxDepth(initialBoard.get_rows(), initialBoard.get_cols());
 
@@ -38,8 +38,6 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
     {
         State *currentState = openList.get_tail();
         openList.remove(currentState);
-        if(currentState->get_depth() > MAX_DEPTH)
-            continue; // Se a profundidade do estado atual exceder o máximo, pula para a próxima iteração
 
         // Adiciona o estado atual ao conjunto de estados fechados
         closedSet.insert(currentState->get_board().real_board);
@@ -60,6 +58,10 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
             reverse(solution_path.begin(), solution_path.end());
             break;
         }
+
+        if(currentState->get_depth() >= MAX_DEPTH)
+            continue; // Se a profundidade do estado atual exceder o máximo, pula para a próxima iteração
+
 
         size_t successors_this_node = 0; // Contador de sucessores deste nó
 
