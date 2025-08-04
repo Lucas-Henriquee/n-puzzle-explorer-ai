@@ -3,7 +3,7 @@
 mkdir -p output  # Cria diretório para os arquivos de saída (se não existir)
 
 find ./data -type f -name "*.txt" | while read -r arquivo; do
-    if [[ "$arquivo" == "./data/test10x10.txt" || "$arquivo" == "./data/test5x5_1.txt" || "$arquivo" == "./data/test5x5_2.txt" || "$arquivo" == "./data/test5x5_3.txt" ]]; then
+    if [[ "$arquivo" == "./data/test10x10.txt" || "$arquivo" == "./data/test5x5_1.txt" || "$arquivo" == "./data/test5x5_2.txt" || "$arquivo" == "./data/test5x5_3.txt" || "$arquivo" == "./data/test4x4_1.txt" || "$arquivo" == "./data/test4x4_2.txt" || "$arquivo" == "./data/test4x4_3.txt" ]]; then
         continue
     fi
 
