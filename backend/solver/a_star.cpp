@@ -68,7 +68,7 @@ SearchStatistics AStarSearch(Board board, const int &heuristic_choice)
 
             if (newBoard.move(direction))
             {
-                if (visited.count(newBoard.real_board) || closed.count(newBoard.real_board))
+                if (closed.count(newBoard.real_board))
                     continue;
 
                 visited.insert(newBoard.real_board);

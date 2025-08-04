@@ -28,17 +28,17 @@ void define_routes(crow::SimpleApp &app)
 
         int heuristic_choice = -1;
 
-        if (heuristic_str == "manhattan") {
+        if (heuristic_str == "Manhattan") {
             heuristic_choice = 1;
-        } else if (heuristic_str == "euclidean") {
+        } else if (heuristic_str == "Euclidean") {
             heuristic_choice = 2;
-        } else if (heuristic_str == "misplaced") {
+        } else if (heuristic_str == "Misplaced") {
             heuristic_choice = 3;
-        } else if (heuristic_str == "linear") {
+        } else if (heuristic_str == "Linear") {
             heuristic_choice = 4;
-        } else if (heuristic_str == "permutation") {
+        } else if (heuristic_str == "Permutation") {
             heuristic_choice = 5;
-        } else if (heuristic_str == "weighted") {
+        } else if (heuristic_str == "Weighted") {
             heuristic_choice = 6;
         } else if (!heuristic_str.empty()) {
             return crow::response(400, "Heurística inválida: " + heuristic_str);
