@@ -74,7 +74,7 @@ SearchStatistics DepthFirstSearch(Board initialBoard)
             if (newBoard.move(dir))
             {
                 // Verifica se o novo estado já foi visitado ou está na lista fechada
-                if (visited.count(newBoard.real_board) || closedSet.count(newBoard.real_board))
+                if (closedSet.count(newBoard.real_board))
                     continue;
 
                 visited.insert(newBoard.real_board); // Marca o novo estado como visitado
