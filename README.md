@@ -31,7 +31,7 @@ O projeto implementa sete algoritmos de busca distintos, divididos em duas categ
 ### 1. Busca Não Informada (Cega)
 Algoritmos que exploram o espaço de estados sem qualquer conhecimento sobre a distância até o objetivo.
 
-* **Backtracking:** Utiliza uma abordagem de profundidade (DFS) de forma recursiva, retrocedendo quando um caminho se mostra inviável.
+* **Backtracking:** Utiliza uma abordagem de profundidade (DFS) de forma recursiva, retrocedendo quando um caminho se mostra inviável. A versão implementada é limitada em profundidade para evitar loops e caminhos infinitos.
 * **Busca em Largura (BFS - Breadth-First Search):** Explora a árvore de busca nível a nível, garantindo a solução com o menor número de movimentos (ótima para custos de ação unitários).
 * **Busca em Profundidade (DFS - Depth-First Search):** Explora um ramo da árvore até sua profundidade máxima antes de retroceder. A versão implementada é limitada em profundidade para evitar loops e caminhos infinitos.
 * **Busca Ordenada (Uniform Cost Search):** Expande o nó com o menor custo acumulado (`g(s)`) desde a origem. Garante a solução de menor custo total.
