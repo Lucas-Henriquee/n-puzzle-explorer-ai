@@ -159,20 +159,13 @@ O repositório está estruturado para separar claramente as responsabilidades, c
     </li>
     <li>
         <details>
-            <summary>📂 <strong>build/</strong> - Diretório de compilação (arquivos objeto <code>.o</code> gerados pelo Makefile).</summary>
-            <ul>
-                <li>📄 <code>backend_api_server_app.o</code>, <code>main_cli.o</code>, etc. - Arquivos objeto compilados a partir dos fontes <code>.cpp</code>.</li>
-            </ul>
-        </details>
-    </li>
-    <li>
-        <details>
             <summary>📂 <strong>data/</strong> - Instâncias de teste para o N-Puzzle.</summary>
             <ul>
                 <li>📄 <code>test3x3_1.txt</code>, <code>test4x4_1.txt</code>, etc. - Arquivos com as configurações iniciais dos tabuleiros.</li>
             </ul>
         </details>
     </li>
+    <li>
         <details>
             <summary>📂 <strong>docs/</strong> - Documentação do projeto.</summary>
             <ul>
@@ -215,7 +208,6 @@ O repositório está estruturado para separar claramente as responsabilidades, c
                 <li>📄 <code>a_star.hpp</code>, <code>backtracking.hpp</code>, etc. - Declarações de classes e funções para cada componente do projeto.</li>
             </ul>
         </details>
-    </li>
     </li>
     <li>
         <details>
