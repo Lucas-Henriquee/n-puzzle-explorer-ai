@@ -39,9 +39,9 @@ Algoritmos que exploram o espaço de estados sem qualquer conhecimento sobre a d
 ### 2. Busca Informada (Heurística)
 Algoritmos que utilizam uma função heurística, `h(s)`, para estimar o custo até o estado final, guiando a busca de forma mais eficiente.
 
-* **Busca Gulosa (Greedy Best-First Search):** Expande o nó que a heurística aponta como o mais próximo do objetivo (`h(s)`), ignorando o custo já percorrido.
-* **Busca A* (A-Star):** Combina o custo real para chegar a um nó (`g(s)`) com a estimativa heurística para chegar ao objetivo (`h(s)`), através da função `f(s) = g(s) + h(s)`. Garante a solução ótima se a heurística for admissível.
-* **Busca IDA* (Iterative Deepening A*):** Uma variante do A* que consome menos memória. Realiza buscas em profundidade sucessivas com um patamar de custo (`f(s)`) crescente, combinando a eficiência de memória do DFS com a otimalidade do A*.
+* **Busca Gulosa (Greedy Search):** Expande o nó que a heurística aponta como o mais próximo do objetivo (`h(s)`), ignorando o custo já percorrido.
+* **Busca A\* (A-Star):** Combina o custo real para chegar a um nó (`g(s)`) com a estimativa heurística para chegar ao objetivo (`h(s)`), através da função `f(s) = g(s) + h(s)`. Garante a solução ótima se a heurística for admissível.
+* **Busca IDA\* (Iterative Deepening A\*):** Uma variante do A* que consome menos memória. Realiza buscas em profundidade sucessivas com um patamar de custo (`f(s)`) crescente, combinando a eficiência de memória do DFS com a otimalidade do A*.
 
 ## 🧠 Funções Heurísticas
 
@@ -81,29 +81,178 @@ Para cada execução, o programa coleta e exibe as seguintes métricas de desemp
 
 O repositório está estruturado para separar claramente as responsabilidades, como a lógica do backend, a interface do frontend, os arquivos de cabeçalho, os dados de teste e os executáveis.
 
-```sh
-.
-├── backend/          # Lógica principal em C++
-│   ├── api/          # Handlers da API para o servidor web
-│   ├── Crow/         # Micro-framework web Crow
-│   ├── heuristics/   # Implementação das funções heurísticas
-│   ├── npuzzle/      # Representação do tabuleiro e estruturas de dados
-│   ├── solver/       # Implementação dos algoritmos de busca
-│   └── utils/        # Funções utilitárias (roteamento, estatísticas)
-├── frontend/         # Interface web interativa
-│   ├── css/          # Estilos da página
-│   ├── js/           # Lógica do lado do cliente (animação, requisições)
-│   └── index.html    # Estrutura da página principal
-├── include/          # Arquivos de cabeçalho (.hpp) para todo o projeto C++
-├── data/             # Arquivos de instância para testes (test3x3, test4x4, etc.)
-├── output/           # Diretório para resultados dos testes em lote do script exec_all.sh
-├── src/              # Arquivos-fonte principais (main.cpp, cli_app.cpp)
-├── results/          # Gráficos e imagens gerados para o relatório
-├── Makefile          # Script de compilação e gerenciamento do projeto
-├── exec_all.sh       # Script para automatizar a execução de testes
-├── npuzzle_exec      # Executável da versão Terminal (CLI)
-└── npuzzle_server    # Executável da versão Servidor Web
-```
+<details open>
+<summary>📂 <strong>Estrutura Completa do N-Puzzle (Clique para expandir/recolher)</strong></summary>
+<ul>
+    <li>
+        <details>
+            <summary>📂 <strong>assets/</strong> - Recursos visuais para a documentação.</summary>
+            <ul>
+                <li>📄 <code>demo.gif</code> - GIF de demonstração da interface web interativa.</li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>backend/</strong> - Lógica principal em C++ (o "coração" da aplicação).</summary>
+            <ul>
+                <li>
+                    <details>
+                        <summary>📂 <strong>api/</strong> - Handlers que definem os endpoints da API REST.</summary>
+                        <ul>
+                            <li>📄 <code>server_app.cpp</code> - Implementação da lógica do servidor e rotas da API.</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>Crow/</strong> - Cópia do micro-framework web Crow.</summary>
+                        <ul>
+                            <li>📂 <strong>include/</strong> - Arquivos de cabeçalho do micro-framework Crow.</li>
+                            <li>📂 <strong>thirdparty/</strong> - Dependências de terceiros do Crow.</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>heuristics/</strong> - Implementação das funções heurísticas.</summary>
+                        <ul>
+                            <li>📄 <code>heuristics.cpp</code> - Código-fonte com a implementação das 6 funções heurísticas.</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>npuzzle/</strong> - Representação do tabuleiro e estruturas de dados.</summary>
+                        <ul>
+                            <li>📄 <code>board.cpp</code> - Classe que representa o estado do tabuleiro e suas operações.</li>
+                            <li>📄 <code>board_utils.cpp</code> - Funções utilitárias para manipulação do tabuleiro.</li>
+                            <li>📄 <code>list.cpp</code> - Estruturas de dados para as listas Aberta e Fechada.</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>solver/</strong> - Implementação dos 7 algoritmos de busca.</summary>
+                        <ul>
+                            <li>📄 <code>a_star.cpp</code> - Implementação do algoritmo A*.</li>
+                            <li>📄 <code>backtracking.cpp</code> - Implementação do algoritmo Backtracking.</li>
+                            <li>📄 <code>bfs.cpp</code> - Implementação da Busca em Largura (BFS).</li>
+                            <li>📄 <code>dfs.cpp</code> - Implementação da Busca em Profundidade (DFS).</li>
+                            <li>📄 <code>greedy.cpp</code> - Implementação da Busca Gulosa (Greedy).</li>
+                            <li>📄 <code>ida_star.cpp</code> - Implementação do algoritmo IDA*.</li>
+                            <li>📄 <code>order.cpp</code> - Implementação da Busca Ordenada (Custo Uniforme).</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>utils/</strong> - Funções utilitárias para o backend.</summary>
+                        <ul>
+                            <li>📄 <code>router.cpp</code> - Lógica de roteamento e validação de requisições da API.</li>
+                            <li>📄 <code>statistics.cpp</code> - Coleta e formatação das estatísticas de execução.</li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>build/</strong> - Diretório de compilação (arquivos objeto <code>.o</code> gerados pelo Makefile).</summary>
+            <ul>
+                <li>📄 <code>backend_api_server_app.o</code>, <code>main_cli.o</code>, etc. - Arquivos objeto compilados a partir dos fontes <code>.cpp</code>.</li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>data/</strong> - Instâncias de teste para o N-Puzzle.</summary>
+            <ul>
+                <li>📄 <code>test3x3_1.txt</code>, <code>test4x4_1.txt</code>, etc. - Arquivos com as configurações iniciais dos tabuleiros.</li>
+            </ul>
+        </details>
+    </li>
+        <details>
+            <summary>📂 <strong>docs/</strong> - Documentação do projeto.</summary>
+            <ul>
+                <li>📄 <code>DCC014-TrabalhoPratico.pdf</code> - Enunciado original do trabalho prático.</li>
+                <li>📄 <code>Relatorio-Final.pdf</code> - Relatório final com análises e conclusões.</li>
+                <li>📄 <code>Slide.pdf</code> - Slides utilizados na apresentação do projeto.</li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>frontend/</strong> - Interface web interativa (HTML, CSS, JS).</summary>
+            <ul>
+                <li>📄 <code>index.html</code> - Estrutura principal da página (HTML5).</li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>css/</strong> - Folhas de estilo.</summary>
+                        <ul>
+                            <li>📄 <code>style.css</code> - Folha de estilo principal da aplicação (CSS3).</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>📂 <strong>js/</strong> - Lógica do lado do cliente.</summary>
+                        <ul>
+                            <li>📄 <code>animation.js</code> - Controla a animação da solução no tabuleiro.</li>
+                            <li>📄 <code>fetcher.js</code> - Realiza as requisições (fetch) para a API do backend.</li>
+                            <li>📄 <code>ui.js</code> - Manipulação dos elementos da interface do usuário.</li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>include/</strong> - Arquivos de cabeçalho (<code>.hpp</code>) para todo o projeto C++.</summary>
+            <ul>
+                <li>📄 <code>a_star.hpp</code>, <code>backtracking.hpp</code>, etc. - Declarações de classes e funções para cada componente do projeto.</li>
+            </ul>
+        </details>
+    </li>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>results/</strong> - Gráficos e imagens para a análise de desempenho.</summary>
+            <ul>
+                <li>📄 <code>grafico_astar.png</code> - Gráfico comparativo de heurísticas para o A*.</li>
+                <li>📄 <code>grafico_greedy.png</code> - Gráfico comparativo de heurísticas para o Greedy.</li>
+                <li>📄 <code>grafico_idastar.png</code> - Gráfico comparativo de heurísticas para o IDA*.</li>
+                <li>📄 <code>grafico1_nao_informados.png</code> - Comparativo de tempo para algoritmos não informados.</li>
+                <li>📄 <code>grafico2_nao_informados.png</code> - Comparativo de nós expandidos para não informados.</li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>scripts/</strong> - Scripts de automação e análise.</summary>
+            <ul>
+                <li>📄 <code>exec_all.sh</code> - Script de automação para executar todos os testes em lote.</li>
+                <li>📄 <code>search_algorithms_performance.py</code> - Script Python para gerar os gráficos de análise.</li>
+            </ul>
+        </details>
+    </li>
+    <li>
+        <details>
+            <summary>📂 <strong>src/</strong> - Arquivos-fonte principais (pontos de entrada).</summary>
+            <ul>
+                <li>📄 <code>cli_app.cpp</code> - Implementação da interface de linha de comando (CLI).</li>
+                <li>📄 <code>main.cpp</code> - Ponto de entrada que decide entre CLI e Servidor Web.</li>
+            </ul>
+        </details>
+    </li>
+    <li>📖 <strong>README.md</strong> - Este arquivo de documentação.</li>
+    <li>⚙️ <strong>Makefile</strong> - Gerencia a compilação e a criação dos executáveis.</li>
+    <li>🚀 <strong>npuzzle_exec</strong> - Executável da versão Terminal (CLI).</li>
+    <li>🚀 <strong>npuzzle_server</strong> - Executável da versão Servidor Web.</li>
+</ul>
+</details>
 
 ## ⚙️ Compilação e Execução
 
@@ -137,11 +286,11 @@ O repositório está estruturado para separar claramente as responsabilidades, c
         **[http://localhost:18080/](http://localhost:18080/)** 
 
 ### Testes Automatizados
-O projeto inclui um script `exec_all.sh` para executar uma bateria de testes.
-* Ele itera sobre todos os arquivos de instância no diretório `data/`.
+O projeto inclui um script [`exec_all.sh`](./scripts/exec_all.sh) para executar uma bateria de testes.
+* Ele itera sobre todos os arquivos de instância no diretório [`data/`](./data/).
 * Para cada instância, executa todos os 7 algoritmos.
 * Para os algoritmos informados, testa todas as 6 heurísticas.
-* As saídas são salvas em arquivos de texto no diretório `output/` para análise posterior.
+* As saídas são salvas em arquivos de texto no diretório [`output/`](./output/) para análise posterior.
 
 ## 📈 Principais Conclusões
 

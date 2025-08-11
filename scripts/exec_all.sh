@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT_DIR" || exit 1
+
 mkdir -p output  # Cria diretório para os arquivos de saída (se não existir)
 
 find ./data -type f -name "*.txt" | while read -r arquivo; do

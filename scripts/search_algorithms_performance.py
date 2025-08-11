@@ -57,7 +57,7 @@ ax1.set_xticklabels(df_uninformed['Algoritmo'])
 ax1.set_title('Tempo de Execução e Custo da Solução por Algoritmo')
 fig.tight_layout()
 fig.legend(loc='upper right', bbox_to_anchor=(1,1), bbox_transform=ax1.transAxes)
-plt.savefig('results/grafico1_nao_informados.png')
+plt.savefig('./results/grafico1_nao_informados.png')
 plt.close(fig)
 
 # Plot Nós Expandidos 
@@ -73,7 +73,7 @@ for bar in bars:
     plt.text(bar.get_x() + bar.get_width()/2.0, yval, f'{yval:,}', va='bottom', ha='center', fontsize=FONT_SIZE * 0.8)
 ax.legend()
 plt.tight_layout()
-plt.savefig('results/grafico2_nao_informados.png')
+plt.savefig('./results/grafico2_nao_informados.png')
 plt.close(fig)
 
 # --- Dados dos Algoritmos Informados ---
@@ -146,7 +146,7 @@ for i, alg in enumerate(algorithms):
     ax1.set_title(f'Desempenho do Algoritmo {alg} por Heurística')
     fig.tight_layout()
     fig.legend(loc='upper right', bbox_to_anchor=(1,1), bbox_transform=ax1.transAxes)
-    plt.savefig(f'results/grafico_{alg.lower().replace("*", "star")}.png')
+    plt.savefig(f'./results/grafico_{alg.lower().replace("*", "star")}.png')
     plt.close(fig)
 
 df_custo = df_informed.pivot_table(index='Heuristica', columns='Algoritmo', values='Custo da Solucao')
